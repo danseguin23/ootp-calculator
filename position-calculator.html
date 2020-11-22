@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>OOTP Calculator</title>
+        <link rel="icon" href="icon.png">
+        <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+        <script type="text/javascript" src="position-calculator.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira Sans Condensed">
+    </head>
+    <body>
+        <div class="container-fluid" style="padding-bottom: 40px">
+            <div class="col-sm-offset-1 col-sm-10" style="padding-top: 10px">
+                <nav class="navbar">
+                    <ul class="nav navbar-nav">
+                        <li class="li-nav"><a href="index.html">HOME</a></li>
+                        <li class="li-nav-active"><a href="position-calculator.html">POSITION CALCULATOR</a></li>
+                        <li class="li-nav"><a href="projections.html">PROJECTIONS</a></li>
+                      </ul>
+                </nav>
+            </div>
+            <div class="col-sm-offset-2 col-sm-8">
+                <h1 class="title">OOTP POSITION CALCULATOR</h1><hr>
+                <p>Ever wondered how good your players might be if they changed positions? Well wonder no longer! By simply entering a player's defensive ratings, this calculator will tell you exactly how good they could be at any position.</p>
+                <p>If you don't care how a player performs at a certain position (e.g. don't care about infield ratings), just leave those fields blank. Make sure to fill out the player's height if you want a first base rating.</p>
+                <hr>
+            </div>
+            <div class="float-left col-sm-offset-1 col-sm-5">
+                <h2 class="title">ENTER PLAYER RATINGS</h2>
+                <hr>
+                <form class="form-horizontal" id="calculator" method="post">
+                    <div class="form-group">
+                        <label class="control-label col-sm-6" for="scale">Ratings Scale:</label>
+                        <div class="col-sm-6">
+                            <select class="form-control" id="scale">
+                                <option>1 to 5</option>
+                                <option>2 to 8</option>
+                                <option>1 to 10</option>
+                                <option>1 to 20</option>
+                                <option selected>20 to 80</option>
+                                <option>1 to 100</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-6">Height (FT-IN):</label>
+                        <div class="col-sm-3">
+                            <input class="form-control" type="number" id="feet" placeholder="feet">
+                        </div>
+                        <div class="col-sm-3">
+                            <input class="form-control" type="number" id="inches" placeholder="inches"/>
+                        </div>
+                    </div>
+                    <div class="form-group error" id="error-height" hidden="true">Height values must be between 0 and 11!</div>
+                    <br>
+                    <div class="form-group" style="padding: 0px">
+                        <label class="control-label col-sm-6" for="cabil">Catcher Ability:</label>
+                        <div class="col-sm-3">
+                            <input class="form-control" type="number" id="cabil"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-6" for="carm">Catcher Arm:</label>
+                        <div class="col-sm-3">
+                            <input class="form-control" type="number" id="carm"/>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <label class="control-label col-sm-6" for="irng">Infield Range:</label>
+                        <div class="col-sm-3">
+                            <input class="form-control" type="number" id="irng"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-6" for="ierr">Infield Error:</label>
+                        <div class="col-sm-3">
+                            <input class="form-control" type="number" id="ierr"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-6" for="iarm">Infield Arm:</label>
+                        <div class="col-sm-3">
+                            <input class="form-control" type="number" id="iarm"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-6" for="dp">Turn DP:</label>
+                        <div class="col-sm-3">
+                            <input class="form-control" type="number" id="dp"/>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <label class="control-label col-sm-6" for="orng">Outfield Range:</label>
+                        <div class="col-sm-3">
+                            <input class="form-control" type="number" id="orng"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-6" for="oerr">Outfield Error:</label>
+                        <div class="col-sm-3">
+                            <input class="form-control" type="number" id="oerr"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-6" for="oarm">Outfield Arm:</label>
+                        <div class="col-sm-3">
+                            <input class="form-control" type="number" id="oarm"/>
+                        </div>
+                    </div>
+                    <div class="form-group error" id="error-range" hidden="true">Ratings must be within the range of the selected scale!</div>
+                    <div class="form-group error" id="error-group" hidden="true">Please fill out at least one group of ratings before submitting!</div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-6 col-sm-6">
+                          <input type="submit" class="btn btn-default btn-ootp" value="Submit"></input>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="float-right col-sm-offset-1 col-sm-4">
+                <h2 class="title">POSITIONAL POTENTIAL</h2>
+                <hr>
+                <table class="table">
+                    <tr class="header">
+                        <th>Position</th>
+                        <th>Rating</th>
+                        <th>WAR</th>
+                    </tr>
+                    <tbody>
+                        <tr>
+                            <td>Catcher</td>
+                            <td id="rate-catcher">-</td>
+                            <td id="war-catcher">-</td>
+                        </tr>
+                        <tr>
+                            <td>First Base</td>
+                            <td id="rate-first">-</td>
+                            <td id="war-first">-</td>
+                        </tr>
+                        <tr>
+                            <td>Second Base</td>
+                            <td id="rate-second">-</td>
+                            <td id="war-second">-</td>
+                        </tr>
+                        <tr>
+                            <td>Third Base</td>
+                            <td id="rate-third">-</td>
+                            <td id="war-third">-</td>
+                        </tr>
+                        <tr>
+                            <td>Shortstop</td>
+                            <td id="rate-shortstop">-</td>
+                            <td id="war-shortstop">-</td>
+                        </tr>
+                        <tr>
+                            <td>Left Field</td>
+                            <td id="rate-left">-</td>
+                            <td id="war-left">-</td>
+                        </tr>
+                        <tr>
+                            <td>Center Field</td>
+                            <td id="rate-center">-</td>
+                            <td id="war-center">-</td>
+                        </tr>
+                        <tr>
+                            <td>Right Field</td>
+                            <td id="rate-right">-</td>
+                            <td id="war-right">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br><h3>NOTES</h3>
+                <hr style="margin-top: 10px; margin-bottom: 10px">
+                <p class="notes"><b>Height</b> only affects First Base rating.</p>
+                <p class="notes"><b>Catcher Ability</b> and <b>Catcher Arm</b> only affect Catcher rating.</p>
+                <p class="notes"><b>Infield Range</b>, <b>Infield Error</b>, <b>Infield Arm</b>, and <b>Turn DP</b> only affect infield ratings (1B, 2B, 3B, SS).</p>
+                <p class="notes"><b>Outfield Range</b>, <b>Outfield Error</b>, and <b>Outfield Arm</b> only affect outfield ratings (LF, CF, RF).</p>
+                <p class="notes"><b>Rating</b> is the player's maximum possible defensive rating for the given position.</p>
+                <p class="notes"><b>WAR</b> is the player's <i>estimated</i> full-season defensive WAR for the given position.</p>
+            </div>
+        </div>
+        <div class="footer">
+            &copy; Daniel C. Seguin, 2020
+        </div>
+    </body>
+</html>

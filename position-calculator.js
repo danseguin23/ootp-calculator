@@ -1,0 +1,215 @@
+$(document).ready(() => {
+    $("#calculator").submit(calculate_value);
+});
+
+function calculate_value(event)
+{
+    // Don't reload IG
+    event.preventDefault();
+
+    // Important variables
+    var scale = document.getElementById("scale").value.split(" ");
+    var min = Number(scale[0]);
+    var max = Number(scale[2]);
+    var feet = Number(document.getElementById("feet").value);
+    var inches = Number(document.getElementById("inches").value);
+    var cabil = Number(document.getElementById("cabil").value);
+    var carm = Number(document.getElementById("carm").value);
+    var irng = Number(document.getElementById("irng").value);
+    var ierr = Number(document.getElementById("ierr").value);
+    var iarm = Number(document.getElementById("iarm").value);
+    var dp = Number(document.getElementById("dp").value);
+    var orng = Number(document.getElementById("orng").value);
+    var oerr = Number(document.getElementById("oerr").value);
+    var oarm = Number(document.getElementById("oarm").value);
+
+    var valid = validate(min, max, feet, inches, cabil, carm, irng, ierr, iarm, dp, orng, oerr, oarm);
+    // Validate
+    if (valid[0] && valid[1])
+    {
+        dif = max - min;
+        var step = 1;
+        if (min == 20 && max == 80)
+            step = 5;
+        slopes = [0.012, 0.006, 0.018, 0.024, 0.024, 0.012, 0.012, 0.012];
+        intercepts = [-0.2, -1.2, -1.5, -2, -1.6, -1.6, -0.6, -1.4];
+        numeric = [0, 0, 0, 0, 0, 0, 0, 0];
+        ratings = ["-", "-", "-", "-", "-", "-", "-", "-"];
+        wars = ["-", "-", "-", "-", "-", "-", "-", "-"];
+        colors = []
+        height = 2.54 * (12 * feet + inches);
+        cabil = (cabil - min) * (200 / dif) + step / 2;
+        carm = (carm - min) * (200 / dif) + step / 2;
+        irng = (irng - min) * (200 / dif) + step / 2;
+        ierr = (ierr - min) * (200 / dif) + step / 2;
+        iarm = (iarm - min) * (200 / dif) + step / 2;
+        dp = (dp - min) * (200 / dif) + step / 2;
+        orng = (orng - min) * (200 / dif) + step / 2;
+        oerr = (oerr - min) * (200 / dif) + step / 2;
+        oarm = (oarm - min) * (200 / dif) + step / 2;
+
+        numeric[0] = 0.78 * cabil + 0.78 * carm - 62;
+        numeric[1] = 3.4 * height + 0.42 * irng + 0.24 * ierr + 0.03 * iarm + 0.03 * dp - 548;
+        numeric[2] = 0.86 * irng + 0.33 * ierr + 0.07 * iarm + 0.39 * dp - 77;
+        numeric[3] = 0.51 * irng + 0.29 * ierr + 0.89 * iarm + 0.13 * dp - 109;
+        numeric[4] = 1.02 * irng + 0.3 * ierr + 0.09 * iarm + 0.35 * dp - 125;
+        numeric[5] = 1.17 * orng + 0.15 * oerr + 0.23 * oarm - 45;
+        numeric[6] = 1.71 * orng + 0.14 * oerr + 0.07 * oarm - 162;
+        numeric[7] = 1.02 * orng + 0.16 * oerr + 0.45 * oarm - 75;
+
+        // Calculate ratings and WAR
+        for (var i = 0; i < 8; ++i)
+        {
+            var rate = dif / 200 * numeric[i] + min;
+            console.log(i, rate);
+
+            if (min == 20 && max == 80)
+                rate = Math.round(rate / 5) * 5;
+            else if (min == 1 && max == 100)
+                rate = Math.round(rate) - 1;
+            else
+                rate = Math.round(rate);
+            
+            var war = Math.round((slopes[i] * numeric[i] + intercepts[i]) * 10) / 10;
+            wars[i] = war.toFixed(1);
+            if (rate > max)
+                ratings[i] = String(max) + "+";
+            else if (rate < min)
+                ratings[i] = String(min);
+            else
+                ratings[i] = String(rate);
+
+            // Do colors
+            if (numeric[i] < 9)
+                colors.push("#A40000");
+            else if (numeric[i] < 25)
+                colors.push("#CB0000");
+            else if (numeric[i] < 42)
+                colors.push("#FD0000");
+            else if (numeric[i] < 59)
+                colors.push("#FD6A00");
+            else if (numeric[i] < 75)
+                colors.push("#FDBC00");
+            else if (numeric[i] < 92)
+                colors.push("#EBDF08");
+            else if (numeric[i] < 109)
+                colors.push("#BBD500");
+            else if (numeric[i] < 125)
+                colors.push("#56D100");
+            else if (numeric[i] < 142)
+                colors.push("#57CF1F");
+            else if (numeric[i] < 159)
+                colors.push("#76D086");
+            else if (numeric[i] < 179)
+                colors.push("#00C4C6");
+            else if (numeric[i] < 192)
+                colors.push("#00C3E5");
+            else
+                colors.push("#0095FB");
+        }
+
+        // Set values
+        if (valid[2])
+        {
+            $("#rate-catcher").text(ratings[0]);
+            $("#rate-catcher").css("color", colors[0]);
+            $("#rate-catcher").css("font-weight", "bold");
+            $("#war-catcher").text(wars[0]);
+        }
+        
+        if (valid[3])
+        {
+            $("#rate-first").text(ratings[1]);
+            $("#war-first").text(wars[1]);
+            $("#rate-first").css("color", colors[1]);
+            $("#rate-first").css("font-weight", "bold");
+        }
+
+        if (valid[4])
+        {
+            $("#rate-second").text(ratings[2]);
+            $("#rate-third").text(ratings[3]);
+            $("#rate-shortstop").text(ratings[4]);
+            $("#war-second").text(wars[2]);
+            $("#war-third").text(wars[3]);
+            $("#war-shortstop").text(wars[4]);
+            $("#rate-second").css("color", colors[2]);
+            $("#rate-second").css("font-weight", "bold");
+            $("#rate-third").css("color", colors[3]);
+            $("#rate-third").css("font-weight", "bold");
+            $("#rate-shortstop").css("color", colors[4]);
+            $("#rate-shortstop").css("font-weight", "bold");
+        }
+
+        if (valid[5])
+        {
+            $("#rate-left").text(ratings[5]);
+            $("#rate-center").text(ratings[6]);
+            $("#rate-right").text(ratings[7]);
+            $("#war-center").text(wars[6]);
+            $("#war-left").text(wars[5]);
+            $("#war-right").text(wars[7]);
+            $("#rate-left").css("color", colors[5]);
+            $("#rate-left").css("font-weight", "bold");
+            $("#rate-center").css("color", colors[6]);
+            $("#rate-center").css("font-weight", "bold");
+            $("#rate-right").css("color", colors[7]);
+            $("#rate-right").css("font-weight", "bold");
+        }
+    }
+}
+
+function validate(min, max, feet, inches, cabil, carm, irng, ierr, iarm, dp, orng, oerr, oarm) 
+{
+    
+    var hvalid = true;  // valid height
+    var rvalid = true;  // valid range
+    var cvalid = false;  // valid catcher ratings
+    var fvalid = false;  // valid first base ratings
+    var ivalid = false;  // valid infield ratings
+    var ovalid = false;  // valid outfield ratings
+
+    if (feet < 0)
+        hvalid = false;
+    else if (inches < 0 || inches > 11)
+        hvalid = false;
+
+    if (cabil != 0 && min > cabil || cabil > max)
+        rvalid = false;
+    else if (carm != 0 && min > carm || carm > max)
+        rvalid = false;
+    else if (irng != 0 && min > irng || irng > max)
+        rvalid = false;
+    else if (ierr != 0 && min > ierr || ierr > max)
+        rvalid = false;
+    else if (iarm != 0 && min > iarm || iarm > max)
+        rvalid = false;
+    else if (dp != 0 && min > dp || dp > max)
+        rvalid = false;
+    else if (orng != 0 && min > orng || orng > max)
+        rvalid = false;
+    else if (oerr != 0 && min > oerr || oerr > max)
+        rvalid = false;
+    else if (oarm != 0 && min > oarm || oarm > max)
+        rvalid = false;
+    
+
+    if (hvalid && rvalid)
+    {
+        cvalid = (cabil > 0) && (carm > 0);
+        ivalid = (irng > 0) && (ierr > 0) && (iarm > 0) && (dp > 0);
+        fvalid = ivalid && ((12 * feet + inches) > 0);
+        ovalid = (orng > 0) && (oerr > 0) && (oarm > 0);
+
+        if (!cvalid && !ivalid && !ovalid)
+            $("#error-group").attr("hidden", false);
+        else
+            $("#error-group").attr("hidden", true);
+    } else
+        $("#error-group").attr("hidden", true);
+
+    $("#error-height").attr("hidden", hvalid);
+    $("#error-range").attr("hidden", rvalid);
+
+    return [hvalid, rvalid, cvalid, fvalid, ivalid, ovalid];
+}
