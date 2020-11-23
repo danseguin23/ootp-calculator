@@ -23,7 +23,7 @@
             <div class="col-sm-offset-2 col-sm-8">
                 <h1 class="title">OOTP POSITION CALCULATOR</h1><hr>
                 <p>Ever wondered how good your players might be if they changed positions? Well wonder no longer! By simply entering a player's defensive ratings, this calculator will tell you exactly how good they could be at any position.</p>
-                <p>If you don't care how a player performs at a certain position (e.g. don't care about infield ratings), just leave those fields blank. Make sure to fill out the player's height if you want a first base rating.</p>
+                <p>If you don't care how a player performs at a certain position (e.g. don't care about infield ratings), just leave those fields blank. Make sure to fill out the player's height if you want a first base rating. Be warned - left-handed throwers can't accrue experience at 2B, 3B or SS.</p>
                 <hr>
             </div>
             <div class="float-left col-sm-offset-1 col-sm-5">
@@ -53,6 +53,14 @@
                         </div>
                     </div>
                     <div class="form-group error" id="error-height" hidden="true">Height values must be between 0 and 11!</div>
+                    <div class="form-check">
+                        <div class="col-sm-6"></div>
+                        <div class="col-sm-3">
+                            <input class="form-check-input" type="checkbox" id="lefty"/>
+                            <label class="form-check-label" for="lefty">throws left</label>
+                        </div>
+                        <br>
+                    </div>
                     <br>
                     <div class="form-group" style="padding: 0px">
                         <label class="control-label col-sm-6" for="cabil">Catcher Ability:</label>
@@ -174,6 +182,7 @@
                 <br><h3>NOTES</h3>
                 <hr style="margin-top: 10px; margin-bottom: 10px">
                 <p class="notes"><b>Height</b> only affects First Base rating.</p>
+                <p class="notes"><b>Lefties</b> will not generate ratings at 2B, 3B, or SS.</p>
                 <p class="notes"><b>Catcher Ability</b> and <b>Catcher Arm</b> only affect Catcher rating.</p>
                 <p class="notes"><b>Infield Range</b>, <b>Infield Error</b>, <b>Infield Arm</b>, and <b>Turn DP</b> only affect infield ratings (1B, 2B, 3B, SS).</p>
                 <p class="notes"><b>Outfield Range</b>, <b>Outfield Error</b>, and <b>Outfield Arm</b> only affect outfield ratings (LF, CF, RF).</p>

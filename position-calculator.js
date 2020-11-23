@@ -13,6 +13,7 @@ function calculate_value(event)
     var max = Number(scale[2]);
     var feet = Number(document.getElementById("feet").value);
     var inches = Number(document.getElementById("inches").value);
+    var lefty = $("#lefty").prop("checked");
     var cabil = Number(document.getElementById("cabil").value);
     var carm = Number(document.getElementById("carm").value);
     var irng = Number(document.getElementById("irng").value);
@@ -22,6 +23,10 @@ function calculate_value(event)
     var orng = Number(document.getElementById("orng").value);
     var oerr = Number(document.getElementById("oerr").value);
     var oarm = Number(document.getElementById("oarm").value);
+
+    ratings = ["-", "-", "-", "-", "-", "-", "-", "-"];
+    wars = ["-", "-", "-", "-", "-", "-", "-", "-"];
+    colors = ["#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"];
 
     var valid = validate(min, max, feet, inches, cabil, carm, irng, ierr, iarm, dp, orng, oerr, oarm);
     // Validate
@@ -34,9 +39,6 @@ function calculate_value(event)
         slopes = [0.012, 0.006, 0.018, 0.024, 0.024, 0.012, 0.012, 0.012];
         intercepts = [-0.2, -1.2, -1.5, -2, -1.6, -1.6, -0.6, -1.4];
         numeric = [0, 0, 0, 0, 0, 0, 0, 0];
-        ratings = ["-", "-", "-", "-", "-", "-", "-", "-"];
-        wars = ["-", "-", "-", "-", "-", "-", "-", "-"];
-        colors = []
         height = 2.54 * (12 * feet + inches);
         cabil = (cabil - min) * (200 / dif) + step / 2;
         carm = (carm - min) * (200 / dif) + step / 2;
@@ -60,8 +62,15 @@ function calculate_value(event)
         // Calculate ratings and WAR
         for (var i = 0; i < 8; ++i)
         {
+            if (i == 0 && !valid[2])
+                continue;
+            else if (i == 1 && !valid[3])
+                continue;
+            else if ((i >= 2 && i <= 4) && (!valid[4] || lefty))
+                continue;
+            else if (i >= 5 && !valid[5])
+                continue;
             var rate = dif / 200 * numeric[i] + min;
-            console.log(i, rate);
 
             if (min == 20 && max == 80)
                 rate = Math.round(rate / 5) * 5;
@@ -79,83 +88,66 @@ function calculate_value(event)
             else
                 ratings[i] = String(rate);
 
-            // Do colors
             if (numeric[i] < 9)
-                colors.push("#A40000");
+                colors[i] = "#A40000";
             else if (numeric[i] < 25)
-                colors.push("#CB0000");
+                colors[i] = "#CB0000";
             else if (numeric[i] < 42)
-                colors.push("#FD0000");
+                colors[i] = "#FD0000";
             else if (numeric[i] < 59)
-                colors.push("#FD6A00");
+                colors[i] = "#FD6A00";
             else if (numeric[i] < 75)
-                colors.push("#FDBC00");
+                colors[i] = "#FDBC00";
             else if (numeric[i] < 92)
-                colors.push("#EBDF08");
+                colors[i] = "#EBDF08";
             else if (numeric[i] < 109)
-                colors.push("#BBD500");
+                colors[i] = "#BBD500";
             else if (numeric[i] < 125)
-                colors.push("#56D100");
+                colors[i] = "#56D100";
             else if (numeric[i] < 142)
-                colors.push("#57CF1F");
+                colors[i] = "#57CF1F";
             else if (numeric[i] < 159)
-                colors.push("#76D086");
+                colors[i] = "#76D086";
             else if (numeric[i] < 179)
-                colors.push("#00C4C6");
+                colors[i] = "#00C4C6";
             else if (numeric[i] < 192)
-                colors.push("#00C3E5");
+                colors[i] = "#00C3E5";
             else
-                colors.push("#0095FB");
+                colors[i] = "#0095FB";
         }
 
-        // Set values
-        if (valid[2])
-        {
-            $("#rate-catcher").text(ratings[0]);
-            $("#rate-catcher").css("color", colors[0]);
-            $("#rate-catcher").css("font-weight", "bold");
-            $("#war-catcher").text(wars[0]);
-        }
-        
-        if (valid[3])
-        {
-            $("#rate-first").text(ratings[1]);
-            $("#war-first").text(wars[1]);
-            $("#rate-first").css("color", colors[1]);
-            $("#rate-first").css("font-weight", "bold");
-        }
-
-        if (valid[4])
-        {
-            $("#rate-second").text(ratings[2]);
-            $("#rate-third").text(ratings[3]);
-            $("#rate-shortstop").text(ratings[4]);
-            $("#war-second").text(wars[2]);
-            $("#war-third").text(wars[3]);
-            $("#war-shortstop").text(wars[4]);
-            $("#rate-second").css("color", colors[2]);
-            $("#rate-second").css("font-weight", "bold");
-            $("#rate-third").css("color", colors[3]);
-            $("#rate-third").css("font-weight", "bold");
-            $("#rate-shortstop").css("color", colors[4]);
-            $("#rate-shortstop").css("font-weight", "bold");
-        }
-
-        if (valid[5])
-        {
-            $("#rate-left").text(ratings[5]);
-            $("#rate-center").text(ratings[6]);
-            $("#rate-right").text(ratings[7]);
-            $("#war-center").text(wars[6]);
-            $("#war-left").text(wars[5]);
-            $("#war-right").text(wars[7]);
-            $("#rate-left").css("color", colors[5]);
-            $("#rate-left").css("font-weight", "bold");
-            $("#rate-center").css("color", colors[6]);
-            $("#rate-center").css("font-weight", "bold");
-            $("#rate-right").css("color", colors[7]);
-            $("#rate-right").css("font-weight", "bold");
-        }
+        $("#rate-catcher").text(ratings[0]);
+        $("#rate-catcher").css("color", colors[0]);
+        $("#rate-catcher").css("font-weight", "bold");
+        $("#war-catcher").text(wars[0]);
+        $("#rate-first").text(ratings[1]);
+        $("#war-first").text(wars[1]);
+        $("#rate-first").css("color", colors[1]);
+        $("#rate-first").css("font-weight", "bold");
+        $("#rate-second").text(ratings[2]);
+        $("#rate-third").text(ratings[3]);
+        $("#rate-shortstop").text(ratings[4]);
+        $("#war-second").text(wars[2]);
+        $("#war-third").text(wars[3]);
+        $("#war-shortstop").text(wars[4]);
+        $("#rate-second").css("color", colors[2]);
+        $("#rate-second").css("font-weight", "bold");
+        $("#rate-third").css("color", colors[3]);
+        $("#rate-third").css("font-weight", "bold");
+        $("#rate-shortstop").css("color", colors[4]);
+        $("#rate-shortstop").css("font-weight", "bold");
+        $("#rate-left").text(ratings[5]);
+        $("#rate-center").text(ratings[6]);
+        $("#rate-right").text(ratings[7]);
+        $("#war-center").text(wars[6]);
+        $("#war-left").text(wars[5]);
+        $("#war-right").text(wars[7]);
+        $("#rate-left").css("color", colors[5]);
+        $("#rate-left").css("font-weight", "bold");
+        $("#rate-center").css("color", colors[6]);
+        $("#rate-center").css("font-weight", "bold");
+        $("#rate-right").css("color", colors[7]);
+        $("#rate-right").css("font-weight", "bold");
     }
 }
 
