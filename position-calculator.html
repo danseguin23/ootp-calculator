@@ -44,18 +44,30 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label col-sm-6">Height (FT-IN):</label>
-                        <div class="col-sm-3">
+                        <label class="control-label col-sm-6" id="label-ft-in">Height (ft-in):</label>
+                        <div class="col-sm-3" id="div-ft">
                             <input class="form-control" type="number" id="feet" placeholder="feet">
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-3" id="div-in">
                             <input class="form-control" type="number" id="inches" placeholder="inches"/>
                         </div>
+                        <label class="control-label col-sm-6" id="label-cm" hidden="true">Height (cm):</label>
+                        <div class="col-sm-6" id="div-cm" hidden="true">
+                            <input class="form-control" type="number" id="centimeters" placeholder="centimeters">
+                        </div>
                     </div>
-                    <div class="form-group error" id="error-height" hidden="true">Height values must be between 0 and 11!</div>
-                    <div class="form-check">
+                    <div class="form-group error" id="error-height" hidden="true">Height cannot be negative!</div>
+                    <div class="form-check-inline" style="padding-bottom: 0px; margin-bottom: 0px">
                         <div class="col-sm-6"></div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-6">
+                            <input class="form-check-input" type="checkbox" id="unit-check" onchange="onChange()"/>
+                            <label class="form-check-label" for="unit-check">use centimeters</label>
+                        </div>
+                        <br>
+                    </div>
+                    <div class="form-check-inline" style="padding-top: 0px; margin-top: 0px">
+                        <div class="col-sm-6"></div>
+                        <div class="col-sm-6">
                             <input class="form-check-input" type="checkbox" id="lefty"/>
                             <label class="form-check-label" for="lefty">throws left</label>
                         </div>
@@ -179,7 +191,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <br><h3>NOTES</h3>
+                <br><br><h3>NOTES</h3>
                 <hr style="margin-top: 10px; margin-bottom: 10px">
                 <p class="notes"><b>Height</b> only affects First Base rating.</p>
                 <p class="notes"><b>Lefties</b> will not generate ratings at 2B, 3B, or SS.</p>

@@ -165,3 +165,7 @@ nav {
 label {
     user-select: text;
 }
+
+.form-check-label {
+    user-select: none;
+}
