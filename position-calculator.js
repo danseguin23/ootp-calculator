@@ -13,6 +13,7 @@ function calculate_value(event)
     var max = Number(scale[2]);
     var feet = Number(document.getElementById("feet").value);
     var inches = Number(document.getElementById("inches").value);
+    var cm = Number(document.getElementById("centimeters").value);
     var lefty = $("#lefty").prop("checked");
     var cabil = Number(document.getElementById("cabil").value);
     var carm = Number(document.getElementById("carm").value);
@@ -28,7 +29,7 @@ function calculate_value(event)
     wars = ["-", "-", "-", "-", "-", "-", "-", "-"];
     colors = ["#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"];
 
-    var valid = validate(min, max, feet, inches, cabil, carm, irng, ierr, iarm, dp, orng, oerr, oarm);
+    var valid = validate(min, max, feet, inches, cm, cabil, carm, irng, ierr, iarm, dp, orng, oerr, oarm);
     // Validate
     if (valid[0] && valid[1])
     {
@@ -39,7 +40,9 @@ function calculate_value(event)
         slopes = [0.012, 0.006, 0.018, 0.024, 0.024, 0.012, 0.012, 0.012];
         intercepts = [-0.2, -1.2, -1.5, -2, -1.6, -1.6, -0.6, -1.4];
         numeric = [0, 0, 0, 0, 0, 0, 0, 0];
-        height = 2.54 * (12 * feet + inches);
+        height = cm;
+        if (height == 0)
+            height = 2.54 * (12 * feet + inches);
         cabil = (cabil - min) * (200 / dif) + step / 2;
         carm = (carm - min) * (200 / dif) + step / 2;
         irng = (irng - min) * (200 / dif) + step / 2;
@@ -151,7 +154,7 @@ function calculate_value(event)
     }
 }
 
-function validate(min, max, feet, inches, cabil, carm, irng, ierr, iarm, dp, orng, oerr, oarm) 
+function validate(min, max, feet, inches, cm, cabil, carm, irng, ierr, iarm, dp, orng, oerr, oarm) 
 {
     
     var hvalid = true;  // valid height
@@ -163,7 +166,9 @@ function validate(min, max, feet, inches, cabil, carm, irng, ierr, iarm, dp, orn
 
     if (feet < 0)
         hvalid = false;
-    else if (inches < 0 || inches > 11)
+    else if (inches < 0)
+        hvalid = false;
+    else if (cm < 0)
         hvalid = false;
 
     if (cabil != 0 && min > cabil || cabil > max)
@@ -190,7 +195,7 @@ function validate(min, max, feet, inches, cabil, carm, irng, ierr, iarm, dp, orn
     {
         cvalid = (cabil > 0) && (carm > 0);
         ivalid = (irng > 0) && (ierr > 0) && (iarm > 0) && (dp > 0);
-        fvalid = ivalid && ((12 * feet + inches) > 0);
+        fvalid = ivalid && (((12 * feet + inches) > 0 || cm > 0));
         ovalid = (orng > 0) && (oerr > 0) && (oarm > 0);
 
         if (!cvalid && !ivalid && !ovalid)
@@ -204,4 +209,14 @@ function validate(min, max, feet, inches, cabil, carm, irng, ierr, iarm, dp, orn
     $("#error-range").attr("hidden", rvalid);
 
     return [hvalid, rvalid, cvalid, fvalid, ivalid, ovalid];
+}
+
+function onChange()
+{
+    var cm = $("#unit-check").prop("checked");
+    $("#label-ft-in").attr("hidden", cm);
+    $("#div-ft").attr("hidden", cm);
+    $("#div-in").attr("hidden", cm);
+    $("#label-cm").attr("hidden", !cm);
+    $("#div-cm").attr("hidden", !cm);
 }
