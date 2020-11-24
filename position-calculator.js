@@ -84,9 +84,7 @@ function calculate_value(event)
             
             var war = Math.round((slopes[i] * numeric[i] + intercepts[i]) * 10) / 10;
             wars[i] = war.toFixed(1);
-            if (rate > max)
-                ratings[i] = String(max) + "+";
-            else if (rate < min)
+            if (rate < min)
                 ratings[i] = String(min);
             else
                 ratings[i] = String(rate);
@@ -170,6 +168,8 @@ function validate(min, max, feet, inches, cm, cabil, carm, irng, ierr, iarm, dp,
         hvalid = false;
     else if (cm < 0)
         hvalid = false;
+
+    max = max * 1.4;
 
     if (cabil != 0 && min > cabil || cabil > max)
         rvalid = false;
