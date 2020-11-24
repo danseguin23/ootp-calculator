@@ -219,4 +219,20 @@ function onChange()
     $("#div-in").attr("hidden", cm);
     $("#label-cm").attr("hidden", !cm);
     $("#div-cm").attr("hidden", !cm);
+    var feet = Number(document.getElementById("feet").value);
+    var inch = Number(document.getElementById("inches").value);
+    var centi = Number(document.getElementById("centimeters").value);
+
+    if (cm && feet > 0)
+    {
+        var convert = String(Math.round(2.54 * (12 * feet + inch)));
+        $("#centimeters").attr("value", convert);
+    } else if (centi > 0)
+    {
+        var inches = Math.round(centi / 2.54);
+        var cinch = inches % 12;
+        var cfoot = (inches - cinch) / 12;
+        $("#feet").attr("value", String(cfoot));
+        $("#inches").attr("value", String(cinch));
+    }
 }
