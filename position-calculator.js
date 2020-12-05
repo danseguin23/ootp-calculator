@@ -38,7 +38,7 @@ function calculate_value(event)
         if (min == 20 && max == 80)
             step = 5;
         slopes = [0.003, 0.009, 0.018, 0.015, 0.024, 0.009, 0.015, 0.009];
-        intercepts = [0.6, -2.25, -2, -1.55, -2.3, -1.8, -1.65, -1.75];
+        intercepts = [1.1, -1.75, -1.5, -1.05, -1.8, -1.3, -1.15, -1.25];
         numeric = [0, 0, 0, 0, 0, 0, 0, 0];
         height = cm;
         if (height == 0)
