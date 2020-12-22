@@ -83,8 +83,10 @@ function calculate_value(event)
                 rate = Math.round(rate);
             
             var war = Math.round((slopes[i] * numeric[i] + intercepts[i]) * 10) / 10;
-            wars[i] = war.toFixed(1);
-            if (rate < min)
+            if (rate > min)
+                wars[i] = war.toFixed(1);
+                
+            if (rate <= min)
                 ratings[i] = String(min);
             else
                 ratings[i] = String(rate);
