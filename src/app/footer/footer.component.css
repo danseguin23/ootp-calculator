@@ -1,0 +1,11 @@
+.copyright {
+    position: fixed;
+    bottom: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    text-align: center;
+    user-select: none;
+}

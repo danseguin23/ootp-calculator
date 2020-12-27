@@ -1,1 +1,52 @@
 /* You can add global styles to this file, and also import other style files */
+* {
+    font-family: 'Fira Sans Condensed';
+    font-size: 14px;
+    color: white;
+    text-align: center;
+}
+
+body {
+    background-color: #050d21;
+    background-image: url("assets/img/background.jpg");
+}
+
+hr {
+    background-color: white;
+}
+
+h1, h2 {
+    font-weight: bold;
+}
+
+br {
+    user-select: none;
+}
+
+a {
+    color: #ff6666;
+}
+
+.title {
+    padding-top: 20px;
+}
+
+.btn-ootp {
+    background-image: linear-gradient(#fafafa, #b4b3b3);
+    border-radius: 0px;
+    border-color: white;
+    border-width: 2px;
+    height: 26px;
+    color: black;
+    padding-top: 0px;
+    font-weight: 500;
+}
+
+.table-ootp {
+    border-spacing: 1px;
+}
+
+.table-ootp th {
+    color: black;
+    background-image: linear-gradient(#fefefe, #aba7a7);
+}

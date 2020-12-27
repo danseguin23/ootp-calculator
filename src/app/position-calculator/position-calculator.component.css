@@ -1,0 +1,120 @@
+
+/*
+.row {
+    height: 21;
+    padding: 2px;
+    margin: 0px;
+}
+
+#form-position label, input {
+    text-align: left;
+    padding: 0px;
+}
+
+.form-control {
+    padding: 1px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-width: 0px;
+    border-radius: 0px;
+    color: white;
+    height: 19px;
+    padding-left: 8px;
+}
+
+
+.form-control:focus {
+    box-shadow: none;
+}
+
+.form-group {
+    padding: 0px 20px 0px 20px;
+}
+*/
+
+.error {
+    font-weight: bold;
+    color: #ff6666;
+}
+
+label {
+    text-align: left;
+    user-select: all;
+    padding-top: 8px;
+}
+
+form {
+    user-select: none;
+}
+
+.form-control {
+    background: rgba(255, 240, 200, 0.22);
+    color: white;
+    border-radius: 0px;
+    border-color: rgba(0, 0, 0, 0.0);
+    text-align: left;
+}
+
+.form-group {
+    margin: 4px;
+}
+
+.notes {
+    font-size: 10px;
+    text-align: left;
+}
+
+h3 {
+    font-weight: bold;
+    font-size: 14px;
+    text-align: left;
+}
+
+b {
+    font-size: 10px;
+}
+
+i {
+    font-size: 10px;
+}
+
+tr:hover {
+    background: rgba(255, 240, 200, 0.22);
+}
+
+tr.header th {
+    background-image: linear-gradient(#fafafa, #b2b1b1);
+}
+
+th {
+    color: black;
+
+}
+
+tr:nth-child(odd) {
+    background:rgba(0, 0, 0, 0.2);
+}
+
+tr:nth-child(even) {
+    background:rgba(255, 255, 255, 0.05);
+}
+
+table {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+label.form-check-label {
+    padding-top: 0px;
+    user-select: none;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}

@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "ootp-calculator": {
+      "hosting": {
+        "ootp-calculator-angular": [
+          "ootp-calculator"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "ootp-calculator"
+  }
+}

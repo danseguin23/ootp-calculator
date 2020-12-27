@@ -1,0 +1,131 @@
+<div class="container-fluid" style="padding-bottom: 40px">
+    <h1 class="title">OOTP POSITION CALCULATOR</h1><hr>
+    <p>Ever wondered how good your players might be if they changed positions? Well wonder no longer! By simply entering a player's defensive ratings, this calculator will tell you exactly how good they could be at any position.</p>
+    <p>If you don't care how a player performs at a certain position (e.g. don't care about infield ratings), just leave those fields blank. Make sure to fill out the player's height if you want a first base rating. Be warned - left-handed throwers can't accrue experience at 2B, 3B or SS.</p>
+    <hr>
+    <div class="row">
+        <div class="col-sm-6">
+            <h2>ENTER PLAYER RATINGS</h2>
+            <hr>
+            <form id="form-position">
+                <div class="form-group row">
+                    <label class="col-4" for="scale">Ratings Scale</label>
+                    <select class="form-control col-7" name="scale" [(ngModel)]="this.scale">
+                        <option>1 to 5</option>
+                        <option>2 to 8</option>
+                        <option>1 to 10</option>
+                        <option>1 to 20</option>
+                        <option selected>20 to 80</option>
+                        <option>1 to 100</option>
+                    </select>
+                </div>
+                <div class="form-group row" id="height-inches" *ngIf="this.useIn">
+                    <label class="col-4" for="feet">Height (ft-in)</label>
+                    <input class="form-control col-3" type="number" placeholder="feet" name="feet" [(ngModel)]="this.feet"/>
+                    <div class="col-1"></div>
+                    <input class="form-control col-3" type="number" placeholder="inches" name="inches" [(ngModel)]="this.inches"/>
+                </div>
+                <div class="row">
+                    <div *ngIf="this.errorIn" class="col-11 error">Height values must be between 0 and 11!</div>
+                </div>
+                <div class="form-group row" id="height-centimeters" *ngIf="this.useCm">
+                    <label class="col-4" for="feet">Height (cm)</label>
+                    <input class="form-control col-7" type="number" placeholder="centimeters" name="centimeters" [(ngModel)]="this.centimeters"/>
+                </div>
+                <div class="row" *ngIf="this.errorCm">
+                    <div class="col-11 error">Height value cannot be negative!</div>
+                </div>
+                <div class="row">
+                    <div class="col-4"></div>
+                    <div class="col-3">
+                        <input class="form-check-input check-ootp" type="checkbox" id="unit-check" (click)="onChange()"/>
+                        <label class="form-check-label" for="unit-check">use cm</label>
+                    </div>
+                    <div class="col-4">
+                        <input class="form-check-input check-ootp" type="checkbox" name="lefty" [(ngModel)]="this.lefty"/>
+                        <label class="form-check-label" for="lefty">throws left</label>
+                    </div>
+                </div>
+                <br>
+                <div class="form-group row">
+                    <label class="col-4" for="cabl">Catcher Ability</label>
+                    <input class="form-control col-3" type="number" name="cabl" [(ngModel)]="this.skills[0]"/>
+                </div>
+                <div class="form-group row">
+                    <label class="col-4" for="carm">Catcher Arm</label>
+                    <input class="form-control col-3" type="number" name="carm" [(ngModel)]="this.skills[1]"/>
+                </div>
+                <br>
+                <div class="form-group row">
+                    <label class="col-4" for="irng">Infield Range</label>
+                    <input class="form-control col-3" type="number" name="irng" [(ngModel)]="this.skills[2]"/>
+                </div>
+                <div class="form-group row">
+                    <label class="col-4" for="ierr">Infield Error</label>
+                    <input class="form-control col-3" type="number" name="ierr" [(ngModel)]="this.skills[3]"/>
+                </div>
+                <div class="form-group row">
+                    <label class="col-4" for="iarm">Infield Arm</label>
+                    <input class="form-control col-3" type="number" name="iarm" [(ngModel)]="this.skills[4]"/>
+                </div>
+                <div class="form-group row">
+                    <label class="col-4" for="turn">Turn DP</label>
+                    <input class="form-control col-3" type="number" name="turn" [(ngModel)]="this.skills[5]"/>
+                </div>
+                <br>
+                <div class="form-group row">
+                    <label class="col-4" for="orng">Outfield Range</label>
+                    <input class="form-control col-3" type="number" name="orng" [(ngModel)]="this.skills[6]"/>
+                </div>
+                <div class="form-group row">
+                    <label class="col-4" for="oerr">Outfield Error</label>
+                    <input class="form-control col-3" type="number" name="oerr" [(ngModel)]="this.skills[7]"/>
+                </div>
+                <div class="form-group row">
+                    <label class="col-4" for="oarm">Outfield Arm</label>
+                    <input class="form-control col-3" type="number" name="oarm" [(ngModel)]="this.skills[8]"/>
+                </div>
+                <div class="row" *ngIf="this.errorRange">
+                    <div class="col-11 error">Ratings must be within the range of the selected scale!</div>
+                </div>
+                <div class="row" *ngIf="this.errorInterval">
+                    <div class="col-11 error">20-80 ratings must be multiples of 5!</div>
+                </div>
+                <div class="row" *ngIf="this.errorGroup">
+                    <div class="col-11 error">Please fill out at least one group of ratings before submitting!</div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-4"></div>
+                    <button id="submit" class="btn btn-ootp" (click)="onSubmit($event)">SUBMIT</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-sm-6">
+            <h2>POSITIONAL POTENTIAL</h2>
+            <hr>
+            <table class="table">
+                <tr class="header">
+                    <th>Position</th>
+                    <th>Rating</th>
+                    <th>WAR</th>
+                </tr>
+                <tbody>
+                    <tr *ngFor="let pos of this.positions; index as i; first as isFirst">
+                        <td>{{this.positions[i]}}</td>
+                        <td style="color:{{this.colors[i]}}">{{this.ratings[i]}}</td>
+                        <td>{{this.wars[i]}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <br><br><h3>NOTES</h3>
+            <hr style="margin-top: 10px; margin-bottom: 10px">
+            <p class="notes"><b>Height</b> only affects First Base rating.</p>
+            <p class="notes"><b>Lefties</b> will not generate ratings at 2B, 3B, or SS.</p>
+            <p class="notes"><b>Catcher Ability</b> and <b>Catcher Arm</b> only affect Catcher rating.</p>
+            <p class="notes"><b>Infield Range</b>, <b>Infield Error</b>, <b>Infield Arm</b>, and <b>Turn DP</b> only affect infield ratings (1B, 2B, 3B, SS).</p>
+            <p class="notes"><b>Outfield Range</b>, <b>Outfield Error</b>, and <b>Outfield Arm</b> only affect outfield ratings (LF, CF, RF).</p>
+            <p class="notes"><b>Rating</b> is the player's maximum possible defensive rating for the given position.</p>
+            <p class="notes"><b>WAR</b> is the player's <i>estimated</i> full-season defensive WAR for the given position.</p>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,27 @@
+nav {
+    user-select: none;
+    padding-top: 9px;
+}
+
+ul {
+    width: 100%;
+}
+
+.nav-link:active {
+    background-image: linear-gradient(#30394b, #4b5363);
+}
+
+.nav-link {
+    color: white;
+    font-weight: bold;
+    padding: 14px;
+}
+
+.nav-item {
+    background-image: linear-gradient(#8a8f99, #606775);
+    margin: 5px;
+}
+
+.nav-link:hover {
+    background-image: linear-gradient(#30394b, #4b5363);
+}
