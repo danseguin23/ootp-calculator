@@ -165,10 +165,18 @@ export class PositionCalculatorComponent implements OnInit {
         }
 
         var ratings = [0, 0, 0, 0, 0, 0, 0, 0];
+        var abil;
+        var arm;
+        var range;
+        var error;
+        var turn;
 
+        // Calculate positional value, shoutout to u/bvimarlins
         // Calculate catcher
         if (!this.errorCatcher) {
-            ratings[0] = 0.78 * (converted[0] + converted[1]) - 62;
+            abil = (converted[0] - 125) / 25 * 19.5;
+            arm = (converted[1] - 125) / 25 * 19.5;
+            ratings[0] = abil + arm + 133;
         }
 
         // Calculate 1B
@@ -178,9 +186,10 @@ export class PositionCalculatorComponent implements OnInit {
         } else {
             height = this.centimeters;
         }
+
         if (height > 0 && !this.errorInfield) {
-            var range;
-            var error;
+            range;
+            error;
             if (converted[2] < 90) {
                 range = converted[2] / 3;
             } else {
@@ -192,8 +201,8 @@ export class PositionCalculatorComponent implements OnInit {
             } else {
                 error = 18 + (converted[3] - 90) / 25;
             }
-            var arm = converted[4] / 70;
-            var turn = converted[5] / 70;
+            arm = converted[4] / 70;
+            turn = converted[5] / 70;
             var hfac = 1 + (height - 155) / 15;
             console.log(range, error, arm, turn);
             console.log(hfac);
@@ -202,16 +211,37 @@ export class PositionCalculatorComponent implements OnInit {
 
         // Calculate rest of IF
         if (!this.errorInfield && !this.lefty) {
-            ratings[2] = 0.86 * converted[2] + 0.33 * converted[3] + 0.07 * converted[4] + 0.39 * converted[5] - 77;
-            ratings[3] = 0.51 * converted[2] + 0.29 * converted[3] + 0.89 * converted[4] + 0.13 * converted[5] - 109;
-            ratings[4] = 1.02 * converted[2] + 0.3 * converted[3] + 0.09 * converted[4] + 0.35 * converted[5] - 125;
+            range = (converted[2] - 125) / 25 * 21.5;
+            error = (converted[3] - 125) / 25 * 8.25;
+            arm = (converted[4] - 125) / 25 * 1.5;
+            turn = (converted[5] - 125) / 25 * 9;
+            ratings[2] = range + error + arm + turn + 129;
+            range = (converted[2] - 125) / 25 * 13;
+            error = (converted[3] - 125) / 25 * 7.5;
+            arm = (converted[4] - 125) / 25 * 17;
+            turn = (converted[5] - 125) / 25 * 3.25;
+            ratings[3] = range + error + arm + turn + 113.5;
+            range = (converted[2] - 125) / 25 * 25.5;
+            error = (converted[3] - 125) / 25 * 7.5;
+            arm = (converted[4] - 125) / 25 * 2;
+            turn = (converted[5] - 125) / 25 * 8;
+            ratings[4] = range + error + arm + turn + 93.75;
         }
 
         // Calculate OF
         if (!this.errorOutfield) {
-            ratings[5] = 1.17 * converted[6] + 0.15 * converted[7] + 0.23 * converted[8] - 45;
-            ratings[6] = 1.71 * converted[6] + 0.14 * converted[7] + 0.07 * converted[8] - 162;
-            ratings[7] = 1.02 * converted[6] + 0.16 * converted[7] + 0.45 * converted[8] - 75;
+            range = (converted[6] - 125) / 25 * 29.5;
+            error = (converted[7] - 125) / 25 * 4;
+            arm = (converted[8] - 125) / 25 * 5.75;
+            ratings[5] = range + error + arm + 149;
+            range = (converted[6] - 125) / 25 * 43;
+            error = (converted[7] - 125) / 25 * 3.5;
+            arm = (converted[8] - 125) / 25 * 1.75;
+            ratings[6] = range + error + arm + 78;
+            range = (converted[6] - 125) / 25 * 25.5;
+            error = (converted[7] - 125) / 25 * 4;
+            arm = (converted[8] - 125) / 25 * 11;
+            ratings[7] = range + error + arm + 129;
         }
 
         console.log("Error: " + this.errorOutfield);

@@ -11,6 +11,11 @@ body {
     background-image: url("assets/img/background.jpg");
 }
 
+.body {
+    max-width: 960px;
+    margin: auto;
+}
+
 hr {
     background-color: white;
 }
@@ -39,7 +44,7 @@ a {
     height: 26px;
     color: black;
     padding-top: 0px;
-    font-weight: 500;
+    font-weight: bold;
 }
 
 .table-ootp {
@@ -49,4 +54,5 @@ a {
 .table-ootp th {
     color: black;
     background-image: linear-gradient(#fefefe, #aba7a7);
+    user-select: none;
 }

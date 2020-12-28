@@ -1,0 +1,14 @@
+.fine {
+    font-size: 10px;
+}
+
+.btn-large {
+    background-image: linear-gradient(#fafafa, #b4b3b3);
+    border-radius: 0px;
+    border-color: white;
+    border-width: 2px;
+    color: black;
+    font-weight: bold;
+    font-size: 20px;
+    padding: 20px;
+}

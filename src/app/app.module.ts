@@ -8,6 +8,8 @@ import { IndexComponent } from './index/index.component';
 import { FooterComponent } from './footer/footer.component';
 import { PositionCalculatorComponent } from './position-calculator/position-calculator.component';
 import { FormsModule } from '@angular/forms';
+import { ProjectionsComponent } from './projections/projections.component';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +17,9 @@ import { FormsModule } from '@angular/forms';
     NavbarComponent,
     IndexComponent,
     FooterComponent,
-    PositionCalculatorComponent
+    PositionCalculatorComponent,
+    ProjectionsComponent,
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,
