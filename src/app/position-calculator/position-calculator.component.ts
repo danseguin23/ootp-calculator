@@ -68,12 +68,33 @@ export class PositionCalculatorComponent implements OnInit {
         this.errorIn = false;
     }
 
-    onSubmit(event : Event): void {
+    onSubmit(event: Event): void {
         event.preventDefault();
         var valid = this.validate();
         if (valid) {
             this.calculatePositions();
         }
+    }
+
+    onClear(event : Event): void {
+        event.preventDefault();
+        this.feet = null;
+        this.inches = null;
+        this.centimeters = null;
+        this.lefty = false;
+        this.errorIn = false;
+        this.errorCm = false;
+        this.skills = [null, null, null, null, null, null, null, null, null];
+        this.errorRange = false;
+        this.errorInterval = false;
+        this.errorGroup = false;
+        this.errorCatcher = false;
+        this.errorInfield = false;
+        this.errorOutfield = false;
+        this.positions = ["Catcher", "First Base", "Second Base", "Third Base", "Shortstop", "Left Field", "Center Field", "Right Field"];
+        this.ratings = ["-", "-", "-", "-", "-", "-", "-", "-"];
+        this.colors = ["#ffffff", "#ffffff", "#ffffff", "#ffffff", "#ffffff", "#ffffff", "#ffffff", "#ffffff"];
+        this.wars = ["-", "-", "-", "-", "-", "-", "-", "-"];
     }
 
     validate(): boolean {

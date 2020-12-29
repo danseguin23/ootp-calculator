@@ -47,6 +47,10 @@ a {
     font-weight: bold;
 }
 
+.btn-ootp:hover {
+    background-image: linear-gradient(#b6b6b6, #838383);
+}
+
 .table-ootp {
     border-spacing: 1px;
 }
