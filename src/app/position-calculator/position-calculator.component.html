@@ -10,7 +10,7 @@
             <form id="form-position">
                 <div class="form-group row">
                     <label class="col-lg-5" for="scale">Ratings Scale</label>
-                    <select class="form-control col-lg-7" name="scale" [(ngModel)]="this.scale">
+                    <select class="form-control col-lg-7" name="scale" [(ngModel)]="this.scale" (change)="onClear($event)">
                         <option>1 to 5</option>
                         <option>2 to 8</option>
                         <option>1 to 10</option>
@@ -19,7 +19,7 @@
                         <option>1 to 100</option>
                     </select>
                 </div>
-                <div class="form-group row" id="height-inches" *ngIf="this.useIn">
+                <div class="form-group row topless" id="height-inches" *ngIf="this.useIn">
                     <label class="col-lg-5" for="feet">Height (ft-in)</label>
                     <input class="form-control col-lg-3" type="number" placeholder="feet" id="feet" name="feet" [(ngModel)]="this.feet"/>
                     <div class="col-lg-1"></div>
@@ -28,7 +28,7 @@
                 <div class="row">
                     <div *ngIf="this.errorIn" class="col-11 error">Height values must be between 0 and 11!</div>
                 </div>
-                <div class="form-group row" id="height-centimeters" *ngIf="this.useCm">
+                <div class="form-group row topless" id="height-centimeters" *ngIf="this.useCm">
                     <label class="col-lg-5" for="centimeters">Height (cm)</label>
                     <input class="form-control col-lg-7" type="number" placeholder="centimeters" id="centimeters" name="centimeters" [(ngModel)]="this.centimeters"/>
                 </div>

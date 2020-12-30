@@ -56,12 +56,16 @@ export class PositionCalculatorComponent implements OnInit {
         this.useCm = !this.useCm;
         this.useIn = !this.useIn;
 
-        if (this.useCm) {
+        if (this.useCm && this.inches != null && this.feet != null) {
             this.centimeters = Math.round(2.54 * (12 * this.feet + this.inches));
-        } else {
+        } else if (this.centimeters != null) {
             var inches = Math.round(this.centimeters / 2.54);
             this.feet = Math.floor(inches / 12);
             this.inches = inches % 12;
+        } else {
+            this.inches = null;
+            this.feet = null;
+            this.centimeters = null;
         }
 
         this.errorCm = false;
@@ -115,16 +119,27 @@ export class PositionCalculatorComponent implements OnInit {
         var split = this.scale.split(" ");
         var min = Number(split[0]);
         var max = Number(split[2]);
-        var max = max * 1.4;
+        var converted;
+        var half;
+
+        if (min == 20) {
+            half = 2.5;
+        } else {
+            half = 0.5;
+        }
 
         this.errorRange = false;
         this.errorInterval = false;
 
         for (var i = 0; i < this.skills.length; ++i) {
             skill = this.skills[i];
-            if (skill != null && (skill < min || skill > max)) {
-                this.errorRange = true;
-                break;
+            if (skill != null) {
+                converted = (skill - min - half - 1) * (200 / (max - min));
+                console.log(i + ": " + converted);
+                if (skill < min || converted > 250) {
+                    this.errorRange = true;
+                    break;
+                }
             } else if (this.scale == "20 to 80" && (skill % 5 != 0)) {
                 this.errorInterval = true;
                 break;
@@ -177,12 +192,18 @@ export class PositionCalculatorComponent implements OnInit {
 
         var converted: number[] = [null, null, null, null, null, null, null, null, null];
         var grade;
+        var num;
         for (var i = 0; i < converted.length; ++i) {
             if (this.skills[i] == null) {
                 continue;
             }
             grade = this.skills[i];
-            converted[i] = Math.ceil(((grade + half) - min) * 200 / (max - min) - 1);
+            num = Math.ceil(((grade + half) - min) * 200 / (max - min) - 1);
+            if (num > 250) {
+                converted[i] = 250;
+            } else {
+                converted[i] = num;
+            }
         }
 
         var ratings = [0, 0, 0, 0, 0, 0, 0, 0];
@@ -209,6 +230,9 @@ export class PositionCalculatorComponent implements OnInit {
         }
 
         if (height > 0 && !this.errorInfield) {
+            if (height > 215) {
+                height = 215;
+            }
             range;
             error;
             if (converted[2] < 90) {
@@ -225,8 +249,6 @@ export class PositionCalculatorComponent implements OnInit {
             arm = converted[4] / 70;
             turn = converted[5] / 70;
             var hfac = 1 + (height - 155) / 15;
-            console.log(range, error, arm, turn);
-            console.log(hfac);
             ratings[1] = hfac * (range + error + arm + turn);
         }
 
@@ -264,10 +286,6 @@ export class PositionCalculatorComponent implements OnInit {
             arm = (converted[8] - 125) / 25 * 11;
             ratings[7] = range + error + arm + 129;
         }
-
-        console.log("Error: " + this.errorOutfield);
-        console.log(converted);
-        console.log(ratings);
 
         // Convert back, get colors and WARs
         var slopes = [0.003, 0.009, 0.018, 0.015, 0.024, 0.009, 0.015, 0.009];

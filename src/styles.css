@@ -48,7 +48,7 @@ a {
 }
 
 .btn-ootp:hover {
-    background-image: linear-gradient(#b6b6b6, #838383);
+    background-image: linear-gradient(#838383, #b6b6b6);
 }
 
 .table-ootp {
