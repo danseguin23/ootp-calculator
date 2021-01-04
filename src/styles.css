@@ -47,6 +47,26 @@ a {
     font-weight: bold;
 }
 
+.btn-ootp:hover {
+    background-image: linear-gradient(#838383, #b6b6b6);
+}
+
+.btn-clear {
+    margin-left: 4px;
+    background-image: linear-gradient(#7a7a7a, #626262);
+    border-radius: 0px;
+    border-color: white;
+    border-width: 2px;
+    height: 26px;
+    color: white;
+    padding-top: 0px;
+    font-weight: bold;
+}
+
+.btn-clear:hover {
+    background-image: linear-gradient(#525252, #626262);
+}
+
 .table-ootp {
     border-spacing: 1px;
 }
@@ -55,4 +75,87 @@ a {
     color: black;
     background-image: linear-gradient(#fefefe, #aba7a7);
     user-select: none;
+}
+
+.table-input td {
+    padding: 1px;
+}
+
+.table-input *.form-control {
+    border-radius: 0px;
+    color: white;
+    background: rgba(255, 240, 200, 0.22);
+    border-color: rgba(255, 240, 200, 0.0);
+    text-align: left;
+}
+
+tr.row-head * {
+    background-color: rgba(201, 28, 57, 0.75);
+    border-width: none;
+}
+
+tr.row-head th {
+    padding: 1px;
+}
+
+.table-output th {
+    padding: 1px;
+}
+
+tr.row-body:hover {
+    background: rgba(255, 240, 200, 0.22);
+    cursor: pointer;
+}
+
+.row-body:nth-child(even) {
+    background:rgba(0, 0, 0, 0.2);
+}
+
+.row-body:nth-child(odd) {
+    background:rgba(255, 255, 255, 0.05);
+}
+
+.table-output td, th {
+    padding: 1px;
+}
+
+form select {
+    text-align: center;
+}
+
+.error {
+    font-weight: bold;
+    color: #ff6666;
+    user-select: none;
+}
+
+.notes * {
+    font-size: 10px;
+}
+
+.notes {
+    font-size: 10px;
+}
+
+h3 {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+input[type="text"]:disabled {
+    background: rgba(5, 13, 33, 0.85);
+    font-weight: bold;
+    color: #7a7b7c;
+  }
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }

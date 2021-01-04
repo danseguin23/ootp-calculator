@@ -10,6 +10,9 @@ import { PositionCalculatorComponent } from './position-calculator/position-calc
 import { FormsModule } from '@angular/forms';
 import { ProjectionsComponent } from './projections/projections.component';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { BatterProjectionsComponent } from './batter-projections/batter-projections.component';
+import { PitcherProjectionsComponent } from './pitcher-projections/pitcher-projections.component';
+import { CookieService } from 'ngx-cookie-service';
 
 @NgModule({
   declarations: [
@@ -19,14 +22,16 @@ import { NotFoundComponent } from './not-found/not-found.component';
     FooterComponent,
     PositionCalculatorComponent,
     ProjectionsComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    BatterProjectionsComponent,
+    PitcherProjectionsComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule
   ],
-  providers: [],
+  providers: [ CookieService ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

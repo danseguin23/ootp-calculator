@@ -1,0 +1,143 @@
+<head><title>Pitcher Projections | OOTP Calculator</title></head>
+<div class="container-fluid" style="padding-bottom: 40px">
+    <h1 class="title">OOTP PITCHER PROJECTIONS</h1><hr>
+    <p>By entering current player ratings, the projection calculator will determine projected full-season stats for the player. The current edition of the projection calculator is best suited for 2020 MLB saves &mdash; you're welcome to try it for historical or international leagues, but the system has been optimized specifically for a modern MLB evironment.</p>
+    <p>To make a projection, just fill out the fields below! To edit or delete a player, click on their entry in the table.</p>
+    <hr>
+    <form>
+        <div class="form-group row">
+            <div class="col-3"></div>
+            <label class = "col-2" for="scale">Ratings Scale</label>
+            <select class="form-control col-3" id="scale" name="scale" [(ngModel)]="scale" default="20 to 80" (change)="scaleChange()">
+                <option>1 to 5</option>
+                <option>2 to 8</option>
+                <option>1 to 10</option>
+                <option>1 to 20</option>
+                <option>20 to 80</option>
+                <option>1 to 100</option>
+            </select>
+        </div>
+        <table class="table table-input">
+            <tr class="row-head">
+                <th>Name</th>
+                <th>Team</th>
+                <th>Position</th>
+                <th>Ground/Fly</th>
+                <th>Stuff</th>
+                <th>Movement</th>
+                <th>Control</th>
+                <th>Stamina</th>
+                <th>Hold</th>
+            </tr>
+            <tr>
+                <td class="col-name" *ngIf="!this.editing">
+                    <input class="form-control" type="text" name="name" [(ngModel)]="name" placeholder="Player Name">
+                </td>
+                <td class="col-name" *ngIf="this.editing">
+                    <input class="form-control" type="text" name="name" [(ngModel)]="name" disabled="disabled">
+                </td>
+                <td class="col-team">
+                    <select class="form-control" name="team" [(ngModel)]="team">
+                        <option *ngFor="let team of this.teams">{{team}}</option>
+                    </select>
+                </td>
+                <td class="col-pos">
+                    <select class="form-control" name="pos" [(ngModel)]="pos">
+                        <option>-</option>
+                        <option>SP</option>
+                        <option>RP</option>
+                        <option>CL</option>
+                    </select></td>
+                <td class="col-gbfb">
+                    <select class="form-control" name="gbfb" [(ngModel)]="gbfb">
+                        <option>EX GB</option>
+                        <option>GB</option>
+                        <option>NEU</option>
+                        <option>FB</option>
+                        <option>EX FB</option>
+                    </select>
+                </td>
+                <td><input class="form-control" type="number" name="stuff" [(ngModel)]="stuff"></td>
+                <td><input class="form-control" type="number" name="movement" [(ngModel)]="movement"></td>
+                <td><input class="form-control" type="number" name="control" [(ngModel)]="control"></td>
+                <td><input class="form-control" type="number" name="stamina" [(ngModel)]="stamina"></td>
+                <td><input class="form-control" type="number" name="hold" [(ngModel)]="hold"></td>
+            </tr>
+        </table>
+        <button *ngIf="!this.editing" id="submit" class="btn btn-ootp" (click)="onSubmit()">SUBMIT</button>
+        <button *ngIf="!this.editing" id="submit" class="btn btn-clear" (click)="clearInput()">CLEAR</button>
+        <button *ngIf="this.editing" id="save" class="btn btn-ootp" (click)="onSubmit()">SAVE PLAYER</button>
+        <button *ngIf="this.editing" id="delete" class="btn btn-clear" (click)="clearInput()">DELETE PLAYER</button>
+        <p *ngIf="this.errorFields" class="error">All fields must be filled out!</p>
+        <p *ngIf="this.errorRange" class="error">Ratings must be within the range of the selected scale!</p>
+        <p *ngIf="this.errorInterval" class="error">20-80 ratings must be multiples of 5!</p>
+        <p *ngIf="this.valid" style="user-select: none">&nbsp;</p>
+    </form>
+    <table class="table table-output">
+        <tr class="row-head">
+            <th>Name</th>
+            <th>Team</th>
+            <th>Pos</th>
+            <th>GP</th>
+            <th>GS</th>
+            <th>IP</th>
+            <th>HA</th>
+            <th>HR</th>
+            <th>ER</th>
+            <th>BB</th>
+            <th>K</th>
+            <th>ERA</th>
+            <th>AVG</th>
+            <th>BABIP</th>
+            <th>WHIP</th>
+            <th>HR/9</th>
+            <th>BB/9</th>
+            <th>K/9</th>
+            <th>K/BB</th>
+            <th>ERA+</th>
+            <th>FIP</th>
+            <th>WAR</th>
+        </tr>
+        <tr class="row-body" *ngFor="let pitcher of this.pitchers; index as i; first as isFirst" (click)="editPitcher(pitcher)">
+            <td class="col-name">{{pitcher.name}}</td>
+            <td class="col-stat">{{pitcher.team}}</td>
+            <td class="col-stat">{{pitcher.pos}}</td>
+            <td class="col-stat">{{stats[i].gp}}</td>
+            <td class="col-stat">{{stats[i].gs}}</td>
+            <td class="col-stat">{{stats[i].ip}}</td>
+            <td class="col-stat">{{stats[i].ha}}</td>
+            <td class="col-stat">{{stats[i].hr}}</td>
+            <td class="col-stat">{{stats[i].er}}</td>
+            <td class="col-stat">{{stats[i].bb}}</td>
+            <td class="col-stat">{{stats[i].k}}</td>
+            <td class="col-stat">{{stats[i].era}}</td>
+            <td class="col-stat">{{stats[i].avg}}</td>
+            <td class="col-stat">{{stats[i].babip}}</td>
+            <td class="col-stat">{{stats[i].whip}}</td>
+            <td class="col-stat">{{stats[i].hr9}}</td>
+            <td class="col-stat">{{stats[i].bb9}}</td>
+            <td class="col-stat">{{stats[i].k9}}</td>
+            <td class="col-stat">{{stats[i].kbb}}</td>
+            <td class="col-stat">{{stats[i].erap}}</td>
+            <td class="col-stat">{{stats[i].fip}}</td>
+            <td class="col-stat">{{stats[i].war}}</td>
+        </tr>
+    </table>
+    <button id="clear" class="btn btn-clear" (click)="clearOutput()">DELETE ALL</button>
+    <br><br><br>
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-6">
+            <h3>NOTES</h3>
+            <hr>
+            <p class="notes"><b>Team</b> indicates which team's ballpark is used for park adjustments</p>
+            <p class="notes"><b>Position</b> determines the pitcher's role</p>
+            <p class="notes"><b>Ground/Fly</b> affects the pitcher's BABIP allowed</p>
+            <p class="notes"><b>Stuff</b> affects the pitcher's strikeout rate</p>
+            <p class="notes"><b>Movement</b> affects the pitcher's home run rate</p>
+            <p class="notes"><b>Control</b> affects the pitcher's walk rate</p>
+            <p class="notes"><b>Stamina</b> affects how deep into games the pitcher can go</p>
+            <p class="notes"><b>Hold</b> has a minor affect on the pitcher's ERA</p>
+        </div>
+    </div>
+</div>

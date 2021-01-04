@@ -1,0 +1,48 @@
+
+.container-fluid {
+    min-width: 750px;
+}
+
+.col-name {
+    width: 13%;
+}
+
+.col-team {
+    width: 10%;
+}
+
+.col-pos {
+    width: 9%;
+}
+
+.col-bats {
+    width: 8%;
+}
+
+.table-output td.col-name {
+    width: 12%;
+}
+
+.col-stat {
+    width: 4%;
+}
+
+#scale {
+    width: 25%;
+}
+
+label {
+    font-weight: bold;
+}
+
+.form-control {
+    border-radius: 0px;
+    color: white;
+    background: rgba(255, 240, 200, 0.22);
+    border-color: rgba(255, 240, 200, 0.0);
+    user-select: none;
+}
+
+label {
+    padding-top: 8px;
+}

@@ -31,11 +31,6 @@
 }
 */
 
-.error {
-    font-weight: bold;
-    color: #ff6666;
-}
-
 label {
     text-align: left;
     user-select: all;
@@ -107,14 +102,23 @@ label.form-check-label {
     user-select: none;
 }
 
-/* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+.btn-clear {
+    margin-left: 4px;
+    background-image: linear-gradient(#7a7a7a, #626262);
+    border-radius: 0px;
+    border-color: white;
+    border-width: 2px;
+    height: 26px;
+    color: white;
+    padding-top: 0px;
+    font-weight: bold;
 }
 
-/* Firefox */
-input[type=number] {
-  -moz-appearance: textfield;
+.btn-clear:hover {
+    background-image: linear-gradient(#525252, #626262);
+}
+
+
+.topless {
+    margin-top: 0px;
 }

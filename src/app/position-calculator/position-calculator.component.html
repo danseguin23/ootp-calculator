@@ -1,3 +1,4 @@
+<head><title>Position Calculator | OOTP Calculator</title></head>
 <div class="container-fluid" style="padding-bottom: 40px">
     <h1 class="title">OOTP POSITION CALCULATOR</h1><hr>
     <p>Ever wondered how good your players might be if they changed positions? Well wonder no longer! By simply entering a player's defensive ratings, this calculator will tell you exactly how good they could be at any position.</p>
@@ -10,16 +11,16 @@
             <form id="form-position">
                 <div class="form-group row">
                     <label class="col-lg-5" for="scale">Ratings Scale</label>
-                    <select class="form-control col-lg-7" name="scale" [(ngModel)]="this.scale">
+                    <select class="form-control col-lg-7" name="scale" [(ngModel)]="this.scale" (change)="changeScale()">
                         <option>1 to 5</option>
                         <option>2 to 8</option>
                         <option>1 to 10</option>
                         <option>1 to 20</option>
-                        <option selected>20 to 80</option>
+                        <option>20 to 80</option>
                         <option>1 to 100</option>
                     </select>
                 </div>
-                <div class="form-group row" id="height-inches" *ngIf="this.useIn">
+                <div class="form-group row topless" id="height-inches" *ngIf="this.useIn">
                     <label class="col-lg-5" for="feet">Height (ft-in)</label>
                     <input class="form-control col-lg-3" type="number" placeholder="feet" id="feet" name="feet" [(ngModel)]="this.feet"/>
                     <div class="col-lg-1"></div>
@@ -28,7 +29,7 @@
                 <div class="row">
                     <div *ngIf="this.errorIn" class="col-11 error">Height values must be between 0 and 11!</div>
                 </div>
-                <div class="form-group row" id="height-centimeters" *ngIf="this.useCm">
+                <div class="form-group row topless" id="height-centimeters" *ngIf="this.useCm">
                     <label class="col-lg-5" for="centimeters">Height (cm)</label>
                     <input class="form-control col-lg-7" type="number" placeholder="centimeters" id="centimeters" name="centimeters" [(ngModel)]="this.centimeters"/>
                 </div>
@@ -37,8 +38,12 @@
                 </div>
                 <div class="row">
                     <div class="col-lg-5"></div>
-                    <div class="col-lg-3">
-                        <input class="form-check-input check-ootp" type="checkbox" id="unit-check" (click)="onChange()"/>
+                    <div *ngIf="this.useIn" class="col-lg-3">
+                        <input class="form-check-input check-ootp" type="checkbox" id="unit-check" (click)="changeUnits()"/>
+                        <label class="form-check-label" for="unit-check">use cm</label>
+                    </div>
+                    <div *ngIf="this.useCm" class="col-lg-3">
+                        <input class="form-check-input check-ootp" type="checkbox" id="unit-check" (click)="changeUnits()" checked/>
                         <label class="form-check-label" for="unit-check">use cm</label>
                     </div>
                     <div class="col-lg-4">
@@ -97,6 +102,7 @@
                 <div class="form-group row">
                     <div class="col-lg-5"></div>
                     <button id="submit" class="btn btn-ootp" (click)="onSubmit($event)">SUBMIT</button>
+                    <button id="clear" class="btn btn-clear" (click)="onClear($event)">CLEAR</button>
                 </div>
                 <br>
             </form>
