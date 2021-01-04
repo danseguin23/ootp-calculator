@@ -31,11 +31,6 @@
 }
 */
 
-.error {
-    font-weight: bold;
-    color: #ff6666;
-}
-
 label {
     text-align: left;
     user-select: all;
@@ -123,17 +118,6 @@ label.form-check-label {
     background-image: linear-gradient(#525252, #626262);
 }
 
-/* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Firefox */
-input[type=number] {
-  -moz-appearance: textfield;
-}
 
 .topless {
     margin-top: 0px;

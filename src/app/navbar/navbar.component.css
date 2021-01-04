@@ -20,6 +20,8 @@ ul {
 .nav-item {
     background-image: linear-gradient(#8a8f99, #606775);
     margin: 5px;
+    border-width: 1px;
+    border-color: white;
 }
 
 .nav-link:hover {

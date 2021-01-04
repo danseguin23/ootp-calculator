@@ -1,5 +1,5 @@
-import { ThrowStmt } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-position-calculator',
@@ -29,9 +29,7 @@ export class PositionCalculatorComponent implements OnInit {
     colors: string[];  // Colors corresponding with ratings
     wars: string[];  // WAR values corresponding with ratings
 
-    constructor() { 
-        this.scale = "20 to 80";
-        this.useCm = false;
+    constructor(private cookieService: CookieService) { 
         this.useIn = true;
         this.lefty = false;
         this.errorIn = false;
@@ -50,11 +48,35 @@ export class PositionCalculatorComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        var scale = this.cookieService.get("scale");
+        if (scale == "") {
+            this.scale = "20 to 80";
+        } else {
+            this.scale = scale;
+        }
+        var units = this.cookieService.get("units");
+        if (units == "cm") {
+            this.useCm = true;
+            this.useIn = false;
+        } else {
+            this.useCm = false;
+            this.useIn = true;
+        }
     }
 
-    onChange(): void {
+    changeScale(): void {
+        this.cookieService.set("scale", this.scale, 32767);
+    }
+
+    changeUnits(): void {
         this.useCm = !this.useCm;
         this.useIn = !this.useIn;
+
+        if (this.useCm) {
+            this.cookieService.set("units", "cm", 32767);
+        } else {
+            this.cookieService.set("units", "in", 32767);
+        }
 
         if (this.useCm && this.inches != null && this.feet != null) {
             this.centimeters = Math.round(2.54 * (12 * this.feet + this.inches));
@@ -135,14 +157,13 @@ export class PositionCalculatorComponent implements OnInit {
             skill = this.skills[i];
             if (skill != null) {
                 converted = (skill - min - half - 1) * (200 / (max - min));
-                console.log(i + ": " + converted);
                 if (skill < min || converted > 250) {
                     this.errorRange = true;
                     break;
-                }
-            } else if (this.scale == "20 to 80" && (skill % 5 != 0)) {
-                this.errorInterval = true;
-                break;
+                } else if (this.scale == "20 to 80" && (skill % 5 != 0)) {
+                    this.errorInterval = true;
+                    break;
+                } 
             }
         }
 

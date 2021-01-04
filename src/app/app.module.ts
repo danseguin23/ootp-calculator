@@ -12,6 +12,7 @@ import { ProjectionsComponent } from './projections/projections.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { BatterProjectionsComponent } from './batter-projections/batter-projections.component';
 import { PitcherProjectionsComponent } from './pitcher-projections/pitcher-projections.component';
+import { CookieService } from 'ngx-cookie-service';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,7 @@ import { PitcherProjectionsComponent } from './pitcher-projections/pitcher-proje
     AppRoutingModule,
     FormsModule
   ],
-  providers: [],
+  providers: [ CookieService ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
