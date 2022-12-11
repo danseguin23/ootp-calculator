@@ -1,56 +1,27 @@
 {
-  "name": "ootp-calculator-angular",
-  "version": "0.0.0",
-  "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e"
-  },
+  "name": "ootp-calculator-vue",
+  "version": "0.1.0",
   "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve --port 8081",
+    "build": "vue-cli-service build"
+  },
   "dependencies": {
-    "@angular/animations": "~9.0.0",
-    "@angular/common": "~9.0.0",
-    "@angular/compiler": "~9.0.0",
-    "@angular/core": "~9.0.0",
-    "@angular/fire": "^6.1.4",
-    "@angular/forms": "~9.0.0",
-    "@angular/platform-browser": "~9.0.0",
-    "@angular/platform-browser-dynamic": "~9.0.0",
-    "@angular/router": "~9.0.0",
-    "firebase": "^7.0 || ^8.0",
-    "ngx-cookie-service": "^11.0.2",
-    "rxjs": "~6.5.4",
-    "tslib": "^1.10.0",
-    "zone.js": "~0.10.2"
+    "axios": "^0.26.1",
+    "core-js": "^3.6.5",
+    "firebase": "^9.8.3",
+    "vue": "^3.0.0",
+    "vue-router": "^4.0.0-0"
   },
   "devDependencies": {
-    "@angular-devkit/architect": ">= 0.900 < 0.1200",
-    "@angular-devkit/build-angular": "^0.1100.5",
-    "@angular/cli": "~9.0.1",
-    "@angular/compiler-cli": "~9.0.0",
-    "@angular/language-service": "~9.0.0",
-    "@types/jasmine": "~3.5.0",
-    "@types/jasminewd2": "~2.0.3",
-    "@types/node": "^12.11.1",
-    "codelyzer": "^5.1.2",
-    "firebase-tools": "^8.0.0",
-    "fuzzy": "^0.1.3",
-    "inquirer": "^6.2.2",
-    "inquirer-autocomplete-prompt": "^1.0.1",
-    "jasmine-core": "~3.5.0",
-    "jasmine-spec-reporter": "~4.2.1",
-    "karma": "~4.3.0",
-    "karma-chrome-launcher": "~3.1.0",
-    "karma-coverage-istanbul-reporter": "~2.1.0",
-    "karma-jasmine": "~2.0.1",
-    "karma-jasmine-html-reporter": "^1.4.2",
-    "open": "^7.0.3",
-    "protractor": "~5.4.3",
-    "ts-node": "~8.3.0",
-    "tslint": "~5.18.0",
-    "typescript": "~3.7.5"
-  }
+    "@vue/cli-plugin-babel": "~4.5.15",
+    "@vue/cli-plugin-router": "~4.5.15",
+    "@vue/cli-service": "~4.5.15",
+    "@vue/compiler-sfc": "^3.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
 }

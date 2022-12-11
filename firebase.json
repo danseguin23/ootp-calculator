@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist/ootp-calculator-angular",
+    "public": "dist",
     "ignore": [
       "firebase.json",
       "**/.*",
