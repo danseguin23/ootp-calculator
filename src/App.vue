@@ -3,7 +3,7 @@
   <div id="header">
     <router-link to="/">OOTP CALCULATOR</router-link>
   </div>
-  <navbar/>
+  <navbar v-if="!home"/>
   <div class="container content">
     <router-view/>
   </div>
@@ -34,21 +34,12 @@ export default {
       welcome: false
     }
   },
-  created() {
-    /* Dynamically set theme
-    let theme = localStorage.getItem('theme');
-    if (theme) {
-      document.body.className = theme;
-    } else {
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.body.className = 'theme-dark';
-        localStorage.setItem('theme', 'theme-dark');
-      } else {
-        document.body.className = "theme-light";
-        localStorage.setItem('theme', 'theme-light');
-      }
+  computed: {
+    home() {
+      return this.$route.path == '/';
     }
-    */
+  },
+  created() {
     let today = new Date();
     let expire = new Date('2022-08-15');
     if (localStorage.getItem('welcome') !== 'true' && today < expire) {
@@ -133,6 +124,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   font-size: 1.125rem;
+  height: 100vh;
 }
 
 #copy {
