@@ -13,6 +13,7 @@
       <a href="mailto:danielseguin23@gmail.com?subject=OOTP Calculator" target="_blank"><img src="/img/mail.svg" alt="Email" width="24"></a>
       <a href="https://twitter.com/danseguin23" target="_blank"><img src="/img/twitter.svg" alt="Twitter" width="24"></a>
       <a href="https://www.reddit.com/message/compose?to=dangraphs&subject=OOTP%20Calculator" target="_blank"><img src="/img/reddit.svg" alt="Reddit" width="24"></a>
+      <a href="https://github.com/danseguin23/ootp-calculator" target="_blank"><img src="/img/github.svg" alt="GitHub" width="24"></a>
     </div>
     <div class="container-donate">
       <a class="button-donate" href="https://www.paypal.com/donate/?business=VF3BSSQ62ULEU&no_recurring=0&item_name=Your+donation+helps+me+keep+the+OOTP+Calculator+up+and+running.+Thanks%21&currency_code=USD" target="_blank">Support This Site</a>
@@ -124,7 +125,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   font-size: 1.125rem;
-  height: 100vh;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 #copy {
