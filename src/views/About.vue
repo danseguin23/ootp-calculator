@@ -9,8 +9,9 @@
     <p>By popular demand, I have added batch projections! That means you can copy and paste ratings from the game, rather than typing them out one player at a time. You're welcome!</p>
     <p>Find batter projections <router-link to="/position-calculator">here</router-link>, or pitcher projections <router-link to="/position-calculator">here</router-link>.</p>
     <h2>Contact</h2>
-    <p>If you have any issues with the site, have any suggestions, or just want to chat, feel free to reach out!</p>
-    <p>You can shoot me an email, or find me on Twitter or Reddit. Links below!</p>
+    <p>If you have any issues with the site, have any suggestions, or just want to chat, feel free to reach out!<br>You can shoot me an email, or find me on Twitter or Reddit. Links below!</p>
+    <h2>Source Code</h2>
+    <p>If for some reason you want to have a look at the site's source code, go nuts. You can find it <a href="https://github.com/danseguin23/ootp-calculator" target="_blank">here</a>.</p>
     <h2>Disclaimer</h2>
     <p>I am in no way affiliated with OOTP Developments. This website is by no means official - just a personal project of mine. I'm guessing I'm not infringing on any copyrights, but I'm really not sure. After all, I'm a programmer, not a lawyer.</p>
     <p>Markus, if you're reading this, please don't sue me. Also, hi.</p>
