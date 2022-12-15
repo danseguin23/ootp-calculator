@@ -30,6 +30,12 @@
       <button class="button-help" type="button" @click="submit($event, true)" v-if="editing">Duplicate Player</button>
     </div>
     <p class="error">{{error}}</p>
+    <div class="projection-lists">
+      <div v-for="list of lists">
+        <button class="button-option button-list" type="button" @click="changeList(list)" :class="{selected: list == currentList}">{{list}}</button>
+      </div>
+      <button class="new-list" type="button" @click="newList()"><img src="/img/add.svg" alt="+" width="24"></button>
+    </div>
     <projection-table ref="table" v-if="players.length > 0 && loaded" :type="type" :players="players" />
   </form>
 </template>
@@ -53,6 +59,9 @@ export default {
       scale: { selected: '20 to 80' },
       error: '\xa0',
       players: [],
+      lists: ['Default', 'Prospects', 'To Acquire'],
+      currentList: '',
+      currentPlayers: [],
       editing: null,
       teams: [],
       team: '-',
@@ -189,6 +198,18 @@ export default {
       }
       localStorage.setItem(this.type, JSON.stringify(this.players));
       this.$analytics.logEvent(this.$instance, `delete-${this.type}-multiple`);
+    },
+
+    changeList(list) {
+      // Select list in HTML
+      //let all = doc
+      let button = document.getElementById(`button-list-${list}`);
+      //button.
+      this.currentList = list;
+    },
+
+    newList() {
+
     }
   }
 }
@@ -264,6 +285,21 @@ select {
 #options .column label {
   font-weight: 700;
   text-transform: uppercase;
+}
+
+.projection-lists {
+  display: flex;
+}
+
+.projection-lists button {
+  margin-bottom: -2px;
+  margin-right: -2px;
+}
+
+button.new-list {
+  background: none;
+  border: 0;
+  padding: 0 0 8px 8px;
 }
 
 </style>
