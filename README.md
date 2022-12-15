@@ -1,8 +1,6 @@
-# OOTP Calculator (Vue)
+# OOTP Calculator
 
-Welcome! This is version 2.0 of the OOTP Calculator which was written using Vue.js. Why did I scrap the perfectly good Angular version, you might ask? Why did I commit the [cardinal sin of software development](https://www.joelonsoftware.com/2000/04/06/things-you-should-never-do-part-i/)? Great question. I guess I thought it was gonna be fun? Anyways, this version has a few more features than the last so it might have been worth it.
-
-If you were looking for the repo for the original OOTP Calculator, find it [here](https://github.com/danseguin23/ootp-calculator).
+Welcome! This is version 2.something of the OOTP Calculator. You can find older versions under different branches if that's what you're looking for.
 
 ## Setup
 

@@ -4,12 +4,18 @@ import PositionCalculator from '../views/PositionCalculator.vue';
 import BatterProjections from '../views/BatterProjections.vue';
 import PitcherProjections from '../views/PitcherProjections.vue';
 import NotFound from '../views/NotFound.vue';
+import About from '../views/About.vue';
 
 const routes = [
   {
     path: '/',
     name: 'Home',
     component: Home
+  },
+  {
+    path: '/about',
+    name: 'About',
+    component: About
   },
   {
     path: '/home',
