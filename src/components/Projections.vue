@@ -32,6 +32,11 @@
     <p class="error">{{error}}</p>
     <div class="projection-lists">
       <div v-for="list of lists">
+        <div class="button-option list-option" :class="{'selected': currentList == list}">
+          <button type="button" class="button-list" @click="changeList(list)">{{list}}</button>
+          <button type="button" class="list-more"><img src="/img/more.svg" alt="..." width="24"></button>
+        </div>
+        <!--
         <button class="button-option button-list" :id="{'list-edit-button': list == editingList}" type="button" @click="changeList(list)" :class="{selected: list == currentList}">
           <div v-if="list != editingList">
             {{list}}
@@ -41,6 +46,7 @@
           </div>
           <input v-else type="text" id="list-edit-input" :placeholder="list">
         </button>
+        -->
       </div>
       <button class="new-list" type="button" @click="newList()"><img src="/img/add.svg" alt="+" width="24"></button>
     </div>
@@ -353,9 +359,44 @@ select {
   align-items: flex-end;
 }
 
-.projection-lists button {
+.list-option {
   margin-bottom: -2px;
   margin-right: -2px;
+  cursor: pointer;
+  position: relative;
+  padding: 4px 48px 4px 16px !important;
+}
+
+.list-option.selected {
+  padding: 8px 48px 8px 16px !important;
+  background-image: var(--gradient-primary-hover);
+  border: 2px solid white;
+  pointer-events: all;
+  cursor: default;
+}
+
+.list-option.selected .button-list {
+  cursor: default;
+}
+
+.list-option button {
+  background: inherit;
+  border: 0;
+  font-weight: inherit;
+  color: inherit;
+}
+
+.list-more {
+  position: absolute;
+  z-index: 10;
+  right: 0;
+  padding: 0 4px 2px 4px;
+  margin-right: 10px;
+  border-radius: 16px;
+}
+
+.list-more:hover {
+  background-image: var(--gradient-primary);
 }
 
 button.new-list {
@@ -368,38 +409,13 @@ button.new-list {
   padding: 4px 16px;
 }
 
-.projection-lists .button-option.selected {
-  padding: 8px 16px;
-  background-image: var(--gradient-primary-hover);
-  border: 2px solid white;
-}
 
-.button-list input {
+.list-option input {
   border: 0;
   text-transform: uppercase;
   font-weight: inherit;
   text-align: inherit;
   width: 6rem;
-}
-
-.button-list button {
-  background: none;
-  border: 0;
-  margin: 0;
-  padding: 0;
-  border-image-width: 0;
-  vertical-align: middle;
-}
-
-.button-list img {
-  border-radius: 12px;
-  margin-bottom: 3px;
-  margin-left: 6px;
-  margin-right: -3px;
-}
-
-.button-list img:hover {
-  background-image: var(--gradient-primary);
 }
 
 </style>
