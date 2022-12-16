@@ -1,5 +1,5 @@
 <template>
-  <MoreOptions />
+  <MoreOptions ref="moreOptions"/>
   <h1>OOTP {{ title }} Projections</h1>
   <div id="overview">
     <p>By entering current player ratings, the projection calculator will determine projected full-season stats for the player.</p>
@@ -34,9 +34,11 @@
     <div class="projection-lists table-responsive">
       <div v-for="list of lists">
         <div class="button-option list-option" :class="{'selected': currentList == list}">
-          <button v-if="list != editingList" type="button" class="button-list" @click="changeList(list)">{{list}}</button>
-          <input v-else type="text" id="list-edit-input" :placeholder="list">
-          <button type="button" class="list-more"><img src="/img/more.svg" alt="..." width="24"></button>
+          <template v-if="list != editingList">
+            <button type="button" class="button-list" @click="changeList(list)">{{list}}</button>
+            <button type="button" class="list-more" @click="showMoreOptions($event, list)"><img src="/img/more.svg" alt="..." width="24"></button>
+          </template> 
+          <input v-else type="text" id="list-edit-input" :value="list">
         </div>
         <!--
         <button class="button-option button-list" :id="{'list-edit-button': list == editingList}" type="button" @click="changeList(list)" :class="{selected: list == currentList}">
@@ -79,11 +81,13 @@ export default {
       lists: ['DEFAULT LIST', 'PROSPECTS', 'ACQUISITION TARGETS'],
       currentList: '',
       editingList: '',
+      optionList: '',
       currentPlayers: [],
       editing: null,
       teams: [],
       team: '-',
-      loaded: false
+      loaded: false,
+      moreOptions: null
     }
   },
   computed: {
@@ -120,6 +124,7 @@ export default {
   },
   mounted() {
     this.scale = this.$refs.scale;
+    this.moreOptions = this.$refs.moreOptions;
     this.option = 'option-single';
     document.getElementById(this.option).classList.add('selected');
   },
@@ -234,11 +239,13 @@ export default {
 
     editList(list, newList=false) {
       // Get list index
+      if (!list) {
+        list = this.optionList;
+      }
       let foundIndex = this.lists.findIndex(l => l == list);
       if (foundIndex < 0) {
         return '';
       }
-
       // Helpers/event listeners
       const doneEditing = (event) => {
         event.preventDefault();
@@ -249,14 +256,12 @@ export default {
         this.lists[foundIndex] = newValue;
         this.changeList(newValue);
       }
-
       const cancelEditing = (event) => {
         event.target.blur();
         if (newList) {
           this.lists.splice(foundIndex, 1);
         }
       }
-
       const keyListener = (event) => {
         if (event.code == 'Space') {
           event.preventDefault();
@@ -280,7 +285,30 @@ export default {
         input.focus();
         input.select();
       }, 100);
+      // TODO: rename list in player objects, update localStorage
       return this.lists[foundIndex];
+    },
+
+    deleteList() {
+      let foundIndex = this.lists.findIndex(l => l == this.optionList);
+      if (foundIndex < 0) {
+        return;
+      }
+      let conf = confirm('Are you sure you want to delete this list? This action cannot be undone!');
+      if (conf) {
+        this.lists.splice(foundIndex, 1);
+      }
+      // TODO: Remove players, update localStorage
+    },
+
+    showMoreOptions(event, list) {
+      this.optionList = list;
+      this.moreOptions.show(event.pageX, event.pageY);
+      event.target.parentElement.addEventListener('blur', () => {
+        setTimeout(() => {
+          this.moreOptions.hide();
+        }, 100);
+      });
     }
   }
 }
@@ -404,7 +432,7 @@ select {
 
 .list-more {
   position: absolute;
-  z-index: 10;
+  z-index: 2;
   right: 0;
   padding: 0 4px 2px 4px;
   margin-right: 10px;
@@ -431,7 +459,7 @@ button.new-list {
   text-transform: uppercase;
   font-weight: inherit;
   text-align: inherit;
-  width: 6rem;
+  width: 8rem;
 }
 
 </style>

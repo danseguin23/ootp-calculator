@@ -1,7 +1,7 @@
 <template>
   <div id="more-options" class="more-options">
     <div class="more-options-item" @click="edit()">
-      <h3>Edit</h3>
+      <h3>Rename</h3>
       <img src="/img/edit.svg" alt="" width="12">
     </div>
     <div class="more-options-item options-delete" @click="remove()">
@@ -36,11 +36,11 @@ export default {
     },
 
     edit() {
-
+      this.$parent.editList();
     },
 
     remove() {
-
+      this.$parent.deleteList();
     }
   }
 }
