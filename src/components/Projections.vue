@@ -34,7 +34,7 @@
       <div v-for="list of lists">
         <div class="button-option list-option" :class="{'selected': currentList == list}">
           <button v-if="list != editingList" type="button" class="button-list" @click="changeList(list)">{{list}}</button>
-          <input v-else type="text" id="list-edit-input">
+          <input v-else type="text" id="list-edit-input" :placeholder="list">
           <button type="button" class="list-more"><img src="/img/more.svg" alt="..." width="24"></button>
         </div>
         <!--
@@ -359,6 +359,7 @@ select {
 .projection-lists {
   display: flex;
   align-items: flex-end;
+  overflow-y: hidden;
 }
 
 .list-option {
