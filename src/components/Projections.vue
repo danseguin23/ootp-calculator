@@ -32,7 +32,15 @@
     <p class="error">{{error}}</p>
     <div class="projection-lists">
       <div v-for="list of lists">
-        <button class="button-option button-list" type="button" @click="changeList(list)" :class="{selected: list == currentList}">{{list}}</button>
+        <button class="button-option button-list" :id="{'list-edit-button': list == editingList}" type="button" @click="changeList(list)" :class="{selected: list == currentList}">
+          <div v-if="list != editingList">
+            {{list}}
+            <button type="button" @click="listOptions()">
+              <img src="/img/more.svg" alt="..." width="24" height="24">
+            </button>
+          </div>
+          <input v-else type="text" id="list-edit-input" :placeholder="list">
+        </button>
       </div>
       <button class="new-list" type="button" @click="newList()"><img src="/img/add.svg" alt="+" width="24"></button>
     </div>
@@ -59,8 +67,9 @@ export default {
       scale: { selected: '20 to 80' },
       error: '\xa0',
       players: [],
-      lists: ['Default List'],
+      lists: ['DEFAULT LIST', 'PROSPECTS', 'ACQUISITION TARGETS'],
       currentList: '',
+      editingList: '',
       currentPlayers: [],
       editing: null,
       teams: [],
@@ -200,16 +209,68 @@ export default {
       this.$analytics.logEvent(this.$instance, `delete-${this.type}-multiple`);
     },
 
+    listOptions(list) {
+      console.log('List options');
+    },
+
     changeList(list) {
       // Select list in HTML
-      //let all = doc
-      let button = document.getElementById(`button-list-${list}`);
-      //button.
       this.currentList = list;
     },
 
     newList() {
+      this.lists.push('NEW LIST');
+      let newList = this.editList('NEW LIST', true);
+    },
 
+    editList(list, newList=false) {
+      // Get list index
+      let foundIndex = this.lists.findIndex(l => l == list);
+      if (foundIndex < 0) {
+        return '';
+      }
+
+      // Helpers/event listeners
+      const doneEditing = (event) => {
+        event.preventDefault();
+        event.target.blur();
+        this.editingList = '';
+        // Only do this if valid list, otherwize delete
+        this.lists[foundIndex] = event.target.value;
+        this.changeList(event.target.value);
+      }
+
+      const cancelEditing = (event) => {
+        event.target.blur();
+        if (newList) {
+          this.lists.splice(foundIndex, 1);
+        }
+      }
+
+      const keyListener = (event) => {
+        if (event.code == 'Space') {
+          event.preventDefault();
+          // event.code = 'Space';
+          event.target.value = event.target.value + ' ';
+        }
+        if (event.code == 'Enter') {
+          event.preventDefault();
+          doneEditing(event);
+        }
+        if (event.code == 'Escape') {
+          cancelEditing(event);
+        }
+      }
+      // 
+      this.editingList = list;
+      setTimeout(() => {
+        let input = document.getElementById('list-edit-input');
+        input.addEventListener('keydown', keyListener);
+        input.addEventListener('blur', doneEditing);
+        input.focus();
+        input.select();
+      }, 100);
+      return this.lists[foundIndex];
     }
   }
 }
@@ -300,7 +361,7 @@ select {
 button.new-list {
   background: none;
   border: 0;
-  padding: 0 0 8px 16px;
+  padding: 8px 16px;
 }
 
 .projection-lists .button-option {
@@ -311,6 +372,34 @@ button.new-list {
   padding: 8px 16px;
   background-image: var(--gradient-primary-hover);
   border: 2px solid white;
+}
+
+.button-list input {
+  border: 0;
+  text-transform: uppercase;
+  font-weight: inherit;
+  text-align: inherit;
+  width: 6rem;
+}
+
+.button-list button {
+  background: none;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  border-image-width: 0;
+  vertical-align: middle;
+}
+
+.button-list img {
+  border-radius: 12px;
+  margin-bottom: 3px;
+  margin-left: 6px;
+  margin-right: -3px;
+}
+
+.button-list img:hover {
+  background-image: var(--gradient-primary);
 }
 
 </style>
