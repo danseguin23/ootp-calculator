@@ -59,7 +59,7 @@ export default {
       scale: { selected: '20 to 80' },
       error: '\xa0',
       players: [],
-      lists: ['Default', 'Prospects', 'To Acquire'],
+      lists: ['Default List'],
       currentList: '',
       currentPlayers: [],
       editing: null,
@@ -289,6 +289,7 @@ select {
 
 .projection-lists {
   display: flex;
+  align-items: flex-end;
 }
 
 .projection-lists button {
@@ -299,7 +300,17 @@ select {
 button.new-list {
   background: none;
   border: 0;
-  padding: 0 0 8px 8px;
+  padding: 0 0 8px 16px;
+}
+
+.projection-lists .button-option {
+  padding: 4px 16px;
+}
+
+.projection-lists .button-option.selected {
+  padding: 8px 16px;
+  background-image: var(--gradient-primary-hover);
+  border: 2px solid white;
 }
 
 </style>
