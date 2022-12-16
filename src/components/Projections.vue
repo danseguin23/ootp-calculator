@@ -30,10 +30,11 @@
       <button class="button-help" type="button" @click="submit($event, true)" v-if="editing">Duplicate Player</button>
     </div>
     <p class="error">{{error}}</p>
-    <div class="projection-lists">
+    <div class="projection-lists table-responsive">
       <div v-for="list of lists">
         <div class="button-option list-option" :class="{'selected': currentList == list}">
-          <button type="button" class="button-list" @click="changeList(list)">{{list}}</button>
+          <button v-if="list != editingList" type="button" class="button-list" @click="changeList(list)">{{list}}</button>
+          <input v-else type="text" id="list-edit-input">
           <button type="button" class="list-more"><img src="/img/more.svg" alt="..." width="24"></button>
         </div>
         <!--
@@ -242,8 +243,9 @@ export default {
         event.target.blur();
         this.editingList = '';
         // Only do this if valid list, otherwize delete
-        this.lists[foundIndex] = event.target.value;
-        this.changeList(event.target.value);
+        let newValue = event.target.value.toUpperCase();
+        this.lists[foundIndex] = newValue;
+        this.changeList(newValue);
       }
 
       const cancelEditing = (event) => {
@@ -379,11 +381,18 @@ select {
   cursor: default;
 }
 
+.list-option, .button-list {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 .list-option button {
   background: inherit;
   border: 0;
   font-weight: inherit;
   color: inherit;
+  text-transform: inherit;
 }
 
 .list-more {
@@ -411,7 +420,7 @@ button.new-list {
 
 
 .list-option input {
-  border: 0;
+  
   text-transform: uppercase;
   font-weight: inherit;
   text-align: inherit;
