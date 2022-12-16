@@ -1,4 +1,5 @@
 <template>
+  <MoreOptions />
   <h1>OOTP {{ title }} Projections</h1>
   <div id="overview">
     <p>By entering current player ratings, the projection calculator will determine projected full-season stats for the player.</p>
@@ -60,11 +61,12 @@ import RatingsScale from '@/components/Projections/RatingsScale.vue';
 import InputBatch from '@/components/Projections/InputBatch.vue';
 import InputSingle from '@/components/Projections/InputSingle.vue';
 import ProjectionTable from '@/components/Projections/ProjectionTable.vue';
+import MoreOptions from './MoreOptions.vue';
 import { getTeams } from '../data-manager';
 
 export default {
   name: 'Projections',
-  components: { RatingsScale, InputBatch, InputSingle, ProjectionTable },
+  components: { RatingsScale, InputBatch, InputSingle, ProjectionTable, MoreOptions },
   props: {
     type: String
   },
@@ -301,6 +303,10 @@ export default {
 </style>
 
 <style scoped>
+
+.projections {
+  position: relative;
+}
 
 .button-option {
   padding: 4px 12px;

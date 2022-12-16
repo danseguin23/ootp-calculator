@@ -50,6 +50,7 @@ export default {
 /* For themes */
 
 body {
+  position: relative;
   --font-sans: 'Barlow Condensed', 'Tahoma', sans-serif;
   --font-mono: 'Source Code Pro', monospace;
   --color-primary: #242E5D;
@@ -115,17 +116,6 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-}
-
-#copy {
-  background-color: var(--color-translucent);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  padding: 6px 0;
-  position: fixed;
-  bottom: 0px;
-  width: 100%;
-  font-size: 16px;
 }
 
 #footer {

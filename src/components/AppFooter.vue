@@ -57,4 +57,15 @@ export default {
 .button-donate:hover {
   background: #E6BF00;
 }
+
+#copy {
+  background-color: var(--color-translucent);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: 6px 0;
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+  font-size: 16px;
+}
 </style>
