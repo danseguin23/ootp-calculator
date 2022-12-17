@@ -65,7 +65,6 @@ import InputSingle from '@/components/Projections/InputSingle.vue';
 import ProjectionTable from '@/components/Projections/ProjectionTable.vue';
 import MoreOptions from './MoreOptions.vue';
 import { getTeams } from '../data-manager';
-import { throwStatement } from '@babel/types';
 
 export default {
   name: 'Projections',
@@ -119,9 +118,9 @@ export default {
       this.players = JSON.parse(players);
     }
     this.populateLists();
+    this.loaded = true;
     getTeams().then(teams => {
       this.teams = teams;
-      this.loaded = true;
     });
   },
   mounted() {
