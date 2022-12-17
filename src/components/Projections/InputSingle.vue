@@ -142,6 +142,10 @@ export default {
     teams: {
       type: Array,
       required: true
+    },
+    list: {
+      type: String,
+      required: true
     }
   },
   data() {
@@ -193,6 +197,7 @@ export default {
       let result;
       try {
         this.player.team = this.team;
+        this.player.list = this.list;
         result = { players: [new this.model(this.teams, this.scale, this.player)]}; 
         if (this.editing) {
           this.$analytics.logEvent(this.$instance, `project-${this.type}-edit`);
@@ -348,5 +353,6 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 </style>

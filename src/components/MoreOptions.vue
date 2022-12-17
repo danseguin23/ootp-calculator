@@ -36,7 +36,7 @@ export default {
     },
 
     edit() {
-      this.$parent.editList();
+      this.$parent.renameList();
     },
 
     remove() {

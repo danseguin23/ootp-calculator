@@ -36,6 +36,10 @@ export default {
     teams: {
       type: Array,
       required: true
+    },
+    list: {
+      type: String,
+      required: true
     }
   },
   data() {
@@ -138,6 +142,7 @@ export default {
     mapPlayers(lines, potential) {
       for (let line of lines) {
         let player = new this.model(this.teams, this.scale, line, this.team, potential);
+        player.list = this.list;
         this.players.push(player);
       }
     },

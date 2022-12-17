@@ -22,8 +22,8 @@
         </select>
       </div>
     </div>
-    <input-single v-if="option == 'option-single'" :type="type" :scale="scale.selected" :teams="teams" ref="single" />
-    <input-batch v-if="option == 'option-batch'" :type="type" :scale="scale.selected" :teams="teams" ref="batch" />
+    <input-single v-if="option == 'option-single'" :type="type" :scale="scale.selected" :teams="teams" :list="currentList" ref="single" />
+    <input-batch v-if="option == 'option-batch'" :type="type" :scale="scale.selected" :teams="teams" :list="currentList" ref="batch" />
     <div class="row-flex">
       <button class="button-submit" type="submit"> {{ editing ? 'Save' : 'Submit' }}</button>
       <button class="button-clear" type="button" @click="clear()" v-if="!editing">Clear</button>
@@ -54,7 +54,7 @@
       </div>
       <button class="new-list" type="button" @click="newList()"><img src="/img/add.svg" alt="+" width="24"></button>
     </div>
-    <projection-table ref="table" v-if="players.length > 0 && loaded" :type="type" :players="players" />
+    <projection-table ref="table" v-if="players.length > 0 && loaded" :type="type" :players="currentPlayers" />
   </form>
 </template>
 
@@ -78,7 +78,7 @@ export default {
       scale: { selected: '20 to 80' },
       error: '\xa0',
       players: [],
-      lists: ['DEFAULT LIST'],
+      lists: [],
       currentList: '',
       editingList: '',
       optionList: '',
@@ -117,6 +117,7 @@ export default {
     if (players && players != 'undefined') {
       this.players = JSON.parse(players);
     }
+    this.populateLists();
     getTeams().then(teams => {
       this.teams = teams;
       this.loaded = true;
@@ -132,6 +133,7 @@ export default {
     setTeam(newTeam) {
       this.team = newTeam;
     },
+
     changeOption() {
       if (this.editing) {
         this.players.push(this.editing);
@@ -147,6 +149,10 @@ export default {
       document.getElementById(this.option).classList.add('selected');
       document.getElementById(remove).classList.remove('selected');
       // localStorage.setItem('option-input', this.option);
+    },
+
+    savePlayers() {
+      localStorage.setItem(this.type, JSON.stringify(this.players));
     },
 
     submit(event, duplicate=false) {
@@ -167,13 +173,15 @@ export default {
         setTimeout(() => {
           this.$refs.table.reSort();
         }, 0);
-        localStorage.setItem(this.type, JSON.stringify(this.players));
+        this.savePlayers();
         if (!duplicate) this.clear();
         if (this.option == 'option-batch') {
           this.changeOption();
         }
         // Scroll to table
         // document.getElementById('table-projections').scrollIntoView(false);
+        // Filter player
+        this.currentPlayers = this.players.filter(p => p.list == this.currentList);
       }
     },
 
@@ -208,7 +216,7 @@ export default {
     },
 
     deletePlayer() {
-      localStorage.setItem(this.type, JSON.stringify(this.players));
+      this.savePlayers();
       this.clear(true);
     },
 
@@ -219,7 +227,7 @@ export default {
           this.players.splice(index, 1);
         }
       }
-      localStorage.setItem(this.type, JSON.stringify(this.players));
+      this.savePlayers();
       this.$analytics.logEvent(this.$instance, `delete-${this.type}-multiple`);
     },
 
@@ -230,14 +238,19 @@ export default {
     changeList(list) {
       // Select list in HTML
       this.currentList = list;
+      this.currentPlayers = this.players.filter(p => p.list == list);
+      if (this.$refs.table) {
+        this.$refs.table.reSort();
+      }
+      localStorage.setItem('list', list);
     },
 
     newList() {
       this.lists.push('');
-      let newList = this.editList('', true);
+      let newList = this.renameList('', true);
     },
 
-    editList(list, newList=false) {
+    renameList(list, isNew=false) {
       // Get list index
       if (!list) {
         list = this.optionList;
@@ -254,11 +267,18 @@ export default {
         // Only do this if valid list, otherwize delete
         let newValue = event.target.value.toUpperCase();
         this.lists[foundIndex] = newValue;
-        this.changeList(newValue);
+        let listPlayers = this.players.filter(p => p.list == list);
+        for (let player of listPlayers) {
+          player.list = newValue;
+        }
+        this.savePlayers();
+        if (isNew || list == this.currentList) {
+          this.changeList(newValue);
+        }
       }
       const cancelEditing = (event) => {
         event.target.blur();
-        if (newList) {
+        if (isNew) {
           this.lists.splice(foundIndex, 1);
         }
       }
@@ -285,8 +305,9 @@ export default {
         input.focus();
         input.select();
       }, 100);
-      // TODO: rename list in player objects, update localStorage
-      return this.lists[foundIndex];
+      // Rename list in player objects, update localStorage
+      let newList = this.lists[foundIndex];
+      return newList;
     },
 
     deleteList() {
@@ -299,6 +320,7 @@ export default {
         this.lists.splice(foundIndex, 1);
       }
       // TODO: Remove players, update localStorage
+
     },
 
     showMoreOptions(event, list) {
@@ -309,6 +331,20 @@ export default {
           this.moreOptions.hide();
         }, 100);
       });
+    },
+
+    populateLists() {
+      const defaultList = 'DEFAULT LIST';
+      // Make sure there aren't any empty lists
+      let empty = this.players.filter(p => !p.list);
+      for (let player of empty) {
+        player.list = defaultList;
+      }
+      // Get unique lists
+      this.lists = this.players.map(p => p.list).filter((value, index, self) => self.indexOf(value) === index);
+      // Select last list
+      this.currentList = localStorage.getItem('list') || defaultList;
+      this.changeList(this.currentList);
     }
   }
 }
