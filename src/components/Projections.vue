@@ -18,7 +18,7 @@
       <div class="column">
         <label>Target List</label>
         <select v-model="targetList">
-          <option v-for="list of lists">{{list}}</option>
+          <option v-for="list of lists" :label="proper(list)">{{list}}</option>
         </select>
       </div>
       <div class="column" :style="option == 'option-single' ? 'width: 0; opacity: 0' : 'width: 10rem;'">
@@ -60,6 +60,7 @@ import InputSingle from '@/components/Projections/InputSingle.vue';
 import ProjectionTable from '@/components/Projections/ProjectionTable.vue';
 import MoreOptions from './MoreOptions.vue';
 import { getTeams } from '../data-manager';
+import { tsUndefinedKeyword } from '@babel/types';
 
 export default {
   name: 'Projections',
@@ -126,6 +127,15 @@ export default {
     document.getElementById(this.option).classList.add('selected');
   },
   methods: {
+    proper(list) {
+      let split = list.split(' ');
+      let proper = ''
+      for (let segment of split) {
+        proper += ' ' + segment[0].toUpperCase() + segment.slice(1).toLowerCase();
+      }
+      return proper.slice(1);
+    },
+
     setTeam(newTeam) {
       this.team = newTeam;
     },
@@ -153,6 +163,21 @@ export default {
         delete player.stale;
       }
       localStorage.setItem(this.type, JSON.stringify(this.players));
+      this.saveLists();
+    },
+
+    saveLists() {
+      localStorage.setItem(`lists-${this.type}`, JSON.stringify(this.lists));
+    },
+
+    loadLists() {
+      let item = localStorage.getItem(`lists-${this.type}`);
+      console.log(item);
+      if (item) {
+        return JSON.parse(item);
+      } else {
+        return []
+      }
     },
 
     raiseError(error) {
@@ -347,91 +372,6 @@ export default {
       }, 100);
     },
 
-    /*
-    // Sorry for this
-    renameList(list, isNew=false) {
-      // Get list index
-      if (!list) {
-        list = this.optionList;
-      }
-      let foundIndex = this.lists.findIndex(l => l == list);
-      if (foundIndex < 0) {
-        return '';
-      }
-      let cancelled = false;
-      // Helpers/event listeners
-      const doneEditing = (event) => {
-        event.preventDefault();
-        // Only do this if valid list, otherwize delete
-        let newValue = event.target.value.toUpperCase();
-        let newIndex = this.lists.findIndex(l => l == newValue);
-        let error = '';
-        if (newValue == '__') {
-          error = 'AAAAAAAAAAHHHHHHHHHHHHHHH!';
-        } else if (newIndex >= 0 && newIndex != foundIndex) {
-          error = `"${newValue}" already exists! Pick a different name.`;
-        } else if (newValue == '') {
-          error = 'List name cannot be left blank!';
-        }
-        if (cancelled || !error) {
-          this.clearError();
-          event.target.blur();
-          this.editingList = '';
-          this.lists[foundIndex] = newValue;
-          let listPlayers = this.players.filter(p => p.list == list);
-          for (let player of listPlayers) {
-            player.list = newValue;
-          }
-          this.savePlayers();
-          if (isNew || list == this.currentList) {
-            this.changeList(newValue);
-          }
-        } else {
-          this.raiseError(error);
-        }
-        if (cancelled) {
-          console.log('cancelled?');
-          this.clearError();
-        }
-      }
-      const cancelEditing = (event) => {
-        event.target.blur();
-        this.clearError();
-        cancelled = true;
-        console.log('Cancelled!!!');
-        if (isNew) {
-          this.lists.splice(foundIndex, 1);
-        }
-      }
-      const keyListener = (event) => {
-        if (event.code == 'Space') {
-          event.preventDefault();
-          // event.code = 'Space';
-          event.target.value = event.target.value + ' ';
-        }
-        if (event.code == 'Enter') {
-          event.preventDefault();
-          doneEditing(event);
-        }
-        if (event.code == 'Escape') {
-          cancelEditing(event);
-        }
-      }
-      // 
-      this.editingList = list;
-      setTimeout(() => {
-        let input = document.getElementById('list-edit-input');
-        input.addEventListener('keydown', keyListener);
-        input.addEventListener('blur', doneEditing);
-        input.focus();
-        input.select();
-      }, 100);
-      // Rename list in player objects, update localStorage
-      let newList = this.lists[foundIndex];
-      return newList;
-    },
-    */
-
     deleteList() {
       let foundIndex = this.lists.findIndex(l => l == this.optionList);
       if (foundIndex < 0) {
@@ -471,9 +411,14 @@ export default {
       }
       // Get unique lists
       this.currentList = localStorage.getItem(`list-${this.type}`) || defaultList;
-      this.lists = this.players.map(p => p.list).filter((value, index, self) => self.indexOf(value) === index);
+      this.lists = this.loadLists();
+      if (!this.lists) {
+        this.lists = this.players.map(p => p.list).filter((value, index, self) => self.indexOf(value) === index);
+        this.saveLists();
+      }
       if (!this.lists.includes(this.currentList)) {
         this.lists.push(this.currentList);
+        this.saveLists();
       }
       // Select last list
       this.changeList(this.currentList);
@@ -623,8 +568,7 @@ button.new-list {
 }
 
 
-.list-option input {
-  
+.list-option input {  
   text-transform: uppercase;
   font-weight: inherit;
   text-align: inherit;
