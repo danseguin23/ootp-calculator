@@ -269,22 +269,39 @@ export default {
       const saveList = (event) => {
         let newList = event.target.value.toUpperCase();
         let newIndex = this.lists.findIndex(l => l == newList);
-        // Only if valid
-        this.lists[oldIndex] = newList;
-        this.editingList = '';
-        let players = this.players.filter(p => p.list == oldList);
-        for (let player of players) {
-          player.list = newList;
+        let error = '';
+        if (newList == '__') {
+          error = 'AAAAHHHHH!!!!';
+        } else if (newList == '') {
+          error = 'List name cannot be left blank!'
+        } else if (newIndex >= 0 && oldIndex != newIndex) {
+          error = `"${newList}" already exists! Pick a different name.`
         }
-        this.savePlayers()
-        if (isNew || this.currentList == oldList) {
-          this.changeList(newList);
+        if (error) {
+          this.raiseError(error);
+          setTimeout(() => {
+            event.target.focus();
+          }, 100);
+        } else {
+          // Only if valid
+          this.clearError();
+          this.lists[oldIndex] = newList;
+          this.editingList = '';
+          let players = this.players.filter(p => p.list == oldList);
+          for (let player of players) {
+            player.list = newList;
+          }
+          this.savePlayers()
+          if (isNew || this.currentList == oldList) {
+            this.changeList(newList);
+          }
         }
       }
       const cancelList = (event) => {
         if (isNew) {
           this.lists.splice(oldIndex, 1);
         }
+        this.clearError();
         this.editingList = '';
       }
       // Event listeners
