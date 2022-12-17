@@ -31,7 +31,6 @@ export default {
       this.options.style.display = 'block';
       this.options.style.left = x + 'px';
       this.options.style.top = y + 'px';
-      console.log(this.lastList);
     },
 
     hide() {
