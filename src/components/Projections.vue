@@ -148,6 +148,15 @@ export default {
       localStorage.setItem(this.type, JSON.stringify(this.players));
     },
 
+    raiseError(error) {
+      this.error = '\xa0';
+      setTimeout(() => this.error = error, 100);
+    },
+
+    clearError() {
+      this.error = '\xa0';
+    },
+
     submit(event, duplicate=false) {
       event.preventDefault();
       let input;
@@ -159,8 +168,7 @@ export default {
       }
       let result = input.submit();
       if (result.error) {
-        this.error = '\xa0';
-        setTimeout(() => this.error = result.error, 100);
+        this.raiseError(result.error);
       } else {
         this.players = this.players.concat(result.players);
         setTimeout(() => {
@@ -186,7 +194,7 @@ export default {
         input = this.$refs.batch;
       }
       input.clear(del);
-      this.error = '\xa0';
+      this.clearError();
       this.editing = null;
       // Scroll down to the projection output
     },
@@ -246,6 +254,7 @@ export default {
       let newList = this.renameList('__', true);
     },
 
+    // Sorry for this
     renameList(list, isNew=false) {
       // Get list index
       if (!list) {
@@ -255,25 +264,47 @@ export default {
       if (foundIndex < 0) {
         return '';
       }
+      let cancelled = false;
       // Helpers/event listeners
       const doneEditing = (event) => {
         event.preventDefault();
-        event.target.blur();
-        this.editingList = '';
         // Only do this if valid list, otherwize delete
         let newValue = event.target.value.toUpperCase();
-        this.lists[foundIndex] = newValue;
-        let listPlayers = this.players.filter(p => p.list == list);
-        for (let player of listPlayers) {
-          player.list = newValue;
+        let newIndex = this.lists.findIndex(l => l == newValue);
+        let error = '';
+        if (newValue == '__') {
+          error = 'AAAAAAAAAAHHHHHHHHHHHHHHH!';
+        } else if (newIndex >= 0 && newIndex != foundIndex) {
+          error = `"${newValue}" already exists! Pick a different name.`;
+        } else if (newValue == '') {
+          error = 'List name cannot be left blank!';
         }
-        this.savePlayers();
-        if (isNew || list == this.currentList) {
-          this.changeList(newValue);
+        if (cancelled || !error) {
+          this.clearError();
+          event.target.blur();
+          this.editingList = '';
+          this.lists[foundIndex] = newValue;
+          let listPlayers = this.players.filter(p => p.list == list);
+          for (let player of listPlayers) {
+            player.list = newValue;
+          }
+          this.savePlayers();
+          if (isNew || list == this.currentList) {
+            this.changeList(newValue);
+          }
+        } else {
+          this.raiseError(error);
+        }
+        if (cancelled) {
+          console.log('cancelled?');
+          this.clearError();
         }
       }
       const cancelEditing = (event) => {
         event.target.blur();
+        this.clearError();
+        cancelled = true;
+        console.log('Cancelled!!!');
         if (isNew) {
           this.lists.splice(foundIndex, 1);
         }
