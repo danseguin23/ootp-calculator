@@ -18,8 +18,8 @@
     </tbody>
   </table>
 </div>
-<button class="button-submit" type="button" @click="download()">Download CSV</button>
-<button class="button-clear" type="button" @click="deleteSelected()">{{buttonLabel}}</button>
+<button class="button-submit" type="button" @click="download()" :disabled="players.length == 0">Download CSV</button>
+<button class="button-clear" type="button" @click="deleteSelected()" :disabled="players.length == 0">{{buttonLabel}}</button>
 </template>
 
 <script>

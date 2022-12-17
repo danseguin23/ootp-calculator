@@ -343,7 +343,7 @@ export default {
 
     showMoreOptions(event, list) {
       this.optionList = list;
-      this.moreOptions.show(event.pageX, event.pageY);
+      this.moreOptions.show(event.pageX, event.pageY, this.lists.length <= 1);
       event.target.parentElement.addEventListener('blur', () => {
         setTimeout(() => {
           this.moreOptions.hide();

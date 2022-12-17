@@ -198,16 +198,19 @@ option {
   background-image: var(--gradient-secondary);
 }
 
+/*
 .button-submit:hover {
   background-image: var(--gradient-secondary-hover);
 }
-
-/*
-.button-submit:hover:not(:disabled) {
-  color: var(--color-secondary);
-  background-color: black;
-}
 */
+
+.button-submit:disabled, .button-clear:disabled {
+  opacity: 0.5;
+}
+
+.button-submit:hover:not(:disabled) {
+  background-image: var(--gradient-secondary-hover);
+}
 
 .button-clear {
   color: black;

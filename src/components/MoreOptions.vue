@@ -4,7 +4,7 @@
       <h3>Rename</h3>
       <img src="/img/edit.svg" alt="" width="12">
     </div>
-    <div class="more-options-item options-delete" @click="remove()">
+    <div class="more-options-item options-delete" @click="remove()" :class="{ disabled: lastList }">
       <h3>Delete</h3>
       <img src="/img/delete.svg" alt="" width="12">
     </div>
@@ -16,7 +16,8 @@ export default {
   name: 'MoreOptions',
   data() {
     return {
-      options: null
+      options: null,
+      lastList: false
     }
   },
   mounted() {
@@ -25,10 +26,12 @@ export default {
     // this.show(0, 0);
   },
   methods: {
-    show(x, y) {
+    show(x, y, lastList) {
+      this.lastList = lastList;
       this.options.style.display = 'block';
       this.options.style.left = x + 'px';
       this.options.style.top = y + 'px';
+      console.log(this.lastList);
     },
 
     hide() {
@@ -85,5 +88,10 @@ export default {
 
 .options-delete {
   color: var(--color-red);
+}
+
+.options-delete.disabled {
+  pointer-events: none;
+  opacity: 0.5;
 }
 </style>
