@@ -38,7 +38,7 @@
             <button type="button" class="button-list" @click="changeList(list)">{{list}}</button>
             <button type="button" class="list-more" @click="showMoreOptions($event, list)"><img src="/img/more.svg" alt="..." width="24"></button>
           </template> 
-          <input v-else type="text" id="list-edit-input" autocomplete="off" :value="list == '__' ? 'NEW LIST' : list">
+          <input v-else type="text" id="list-edit-input" autocomplete="off" :value="list || 'NEW LIST'">
         </div>
       </div>
       <button class="new-list" type="button" @click="newList()"><img src="/img/add.svg" alt="+" width="24"></button>
@@ -227,12 +227,13 @@ export default {
 
     deleteSelected(selected) {
       for (let player of selected) {
-        let index = this.currentPlayers.indexOf(player);
+        let index = this.players.indexOf(player);
         if (index >= 0) {
-          this.currentPlayers.splice(index, 1);
+          this.players.splice(index, 1);
         }
       }
       this.savePlayers();
+      this.currentPlayers = this.players.filter(p => p.list == this.currentList);
       this.$analytics.logEvent(this.$instance, `delete-${this.type}-multiple`);
     },
 
@@ -250,10 +251,75 @@ export default {
     },
 
     newList() {
-      this.lists.push('__');
-      let newList = this.renameList('__', true);
+      this.lists.push('');
+      this.renameList(true);
     },
 
+    renameList(isNew) {
+      let oldList;
+      if (isNew) {
+        oldList = '';
+      } else {
+        oldList = this.optionList;
+      }
+      this.editingList = oldList;
+      let cancelled = false;
+      let oldIndex = this.lists.findIndex(l => l == oldList);
+      // Helpers
+      const saveList = (event) => {
+        let newList = event.target.value.toUpperCase();
+        let newIndex = this.lists.findIndex(l => l == newList);
+        // Only if valid
+        this.lists[oldIndex] = newList;
+        this.editingList = '';
+        let players = this.players.filter(p => p.list == oldList);
+        for (let player of players) {
+          player.list = newList;
+        }
+        this.savePlayers()
+        if (isNew || this.currentList == oldList) {
+          this.changeList(newList);
+        }
+      }
+      const cancelList = (event) => {
+        if (isNew) {
+          this.lists.splice(oldIndex, 1);
+        }
+        this.editingList = '';
+      }
+      // Event listeners
+      const inputKeydown = (event) => {
+        if (event.code == 'Enter') {
+          event.preventDefault();
+          cancelled = false;
+          event.target.blur();
+        } else if (event.code == 'Escape') {
+          event.preventDefault();
+          cancelled = true;
+          event.target.blur();
+        }
+      }
+      const inputFocus = (event) => {
+        event.target.select();
+      }
+      const inputBlur = (event) => {
+        if (cancelled) {
+          cancelList(event);
+        } else {
+          saveList(event);
+        }
+      }
+      // Focus & select input
+      setTimeout(() => {
+        let input = document.getElementById('list-edit-input');
+        input.addEventListener('keydown', inputKeydown)
+        input.addEventListener('focus', inputFocus)
+        input.addEventListener('blur', inputBlur)
+        input.focus();
+      }, 100);
+    },
+
+    /*
     // Sorry for this
     renameList(list, isNew=false) {
       // Get list index
@@ -336,6 +402,7 @@ export default {
       let newList = this.lists[foundIndex];
       return newList;
     },
+    */
 
     deleteList() {
       let foundIndex = this.lists.findIndex(l => l == this.optionList);

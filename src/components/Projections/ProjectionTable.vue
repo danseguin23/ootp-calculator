@@ -63,7 +63,7 @@ export default {
   },
   watch: {
     players(to, from) {
-      if (to.length == (from.length + 1)) {
+      if (to.length == (from.length + 1) && from.length >= 1) {
         if (to[0].list == from[0].list) {
           let lastAdded;
           for (let player of to) {
