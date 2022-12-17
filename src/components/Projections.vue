@@ -38,7 +38,7 @@
             <button type="button" class="button-list" @click="changeList(list)">{{list}}</button>
             <button type="button" class="list-more" @click="showMoreOptions($event, list)"><img src="/img/more.svg" alt="..." width="24"></button>
           </template> 
-          <input v-else type="text" id="list-edit-input" :value="list">
+          <input v-else type="text" id="list-edit-input" :value="list || 'NEW LIST'">
         </div>
         <!--
         <button class="button-option button-list" :id="{'list-edit-button': list == editingList}" type="button" @click="changeList(list)" :class="{selected: list == currentList}">
@@ -78,7 +78,7 @@ export default {
       scale: { selected: '20 to 80' },
       error: '\xa0',
       players: [],
-      lists: ['DEFAULT LIST', 'PROSPECTS', 'ACQUISITION TARGETS'],
+      lists: ['DEFAULT LIST'],
       currentList: '',
       editingList: '',
       optionList: '',
@@ -233,8 +233,8 @@ export default {
     },
 
     newList() {
-      this.lists.push('NEW LIST');
-      let newList = this.editList('NEW LIST', true);
+      this.lists.push('');
+      let newList = this.editList('', true);
     },
 
     editList(list, newList=false) {
