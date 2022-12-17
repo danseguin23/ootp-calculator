@@ -65,6 +65,7 @@ import InputSingle from '@/components/Projections/InputSingle.vue';
 import ProjectionTable from '@/components/Projections/ProjectionTable.vue';
 import MoreOptions from './MoreOptions.vue';
 import { getTeams } from '../data-manager';
+import { throwStatement } from '@babel/types';
 
 export default {
   name: 'Projections',
@@ -330,7 +331,14 @@ export default {
         this.lists.splice(foundIndex, 1);
       }
       // TODO: Remove players, update localStorage
-
+      this.players = this.players.filter(p => p.list != this.optionList);
+      this.savePlayers();
+      // Change list
+      if (this.optionList == this.currentList) {
+        if (this.players.length > 0) {
+          this.changeList(this.players[0].list);
+        }
+      }
     },
 
     showMoreOptions(event, list) {
