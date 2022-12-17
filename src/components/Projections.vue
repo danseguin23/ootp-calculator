@@ -136,7 +136,7 @@ export default {
 
     changeOption() {
       if (this.editing) {
-        this.players.push(this.editing);
+        this.currentPlayers.push(this.editing);
         this.$refs.table.reSort();
         this.editing = null;
       }
@@ -207,13 +207,17 @@ export default {
       this.team = player.team;
       setTimeout(() => {
         if (this.editing) {
-          this.players.push(this.editing);
+          this.currentPlayers.push(this.editing);
           this.$refs.table.reSort();
         }
         this.editing = player;
-        let index = this.players.indexOf(player);
+        let index = this.currentPlayers.indexOf(player);
         if (index >= 0) {
-          this.players.splice(index, 1);
+          this.currentPlayers.splice(index, 1);
+        }
+        let allIndex = this.players.indexOf(player);
+        if (allIndex >= 0) {
+          this.players.splice(allIndex, 1);
         }
         this.$refs.single.editPlayer(player);
       }, 1);
@@ -226,9 +230,9 @@ export default {
 
     deleteSelected(selected) {
       for (let player of selected) {
-        let index = this.players.indexOf(player);
+        let index = this.currentPlayers.indexOf(player);
         if (index >= 0) {
-          this.players.splice(index, 1);
+          this.currentPlayers.splice(index, 1);
         }
       }
       this.savePlayers();
