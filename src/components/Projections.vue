@@ -40,17 +40,6 @@
           </template> 
           <input v-else type="text" id="list-edit-input" autocomplete="off" :value="list == '__' ? 'NEW LIST' : list">
         </div>
-        <!--
-        <button class="button-option button-list" :id="{'list-edit-button': list == editingList}" type="button" @click="changeList(list)" :class="{selected: list == currentList}">
-          <div v-if="list != editingList">
-            {{list}}
-            <button type="button" @click="listOptions()">
-              <img src="/img/more.svg" alt="..." width="24" height="24">
-            </button>
-          </div>
-          <input v-else type="text" id="list-edit-input" :placeholder="list">
-        </button>
-        -->
       </div>
       <button class="new-list" type="button" @click="newList()"><img src="/img/add.svg" alt="+" width="24"></button>
     </div>
@@ -128,11 +117,6 @@ export default {
     this.moreOptions = this.$refs.moreOptions;
     this.option = 'option-single';
     document.getElementById(this.option).classList.add('selected');
-  },
-  watch: {
-    editingList(to, from) {
-      console.log('Changed editing list', to, from);
-    }
   },
   methods: {
     setTeam(newTeam) {
@@ -244,10 +228,6 @@ export default {
       this.$analytics.logEvent(this.$instance, `delete-${this.type}-multiple`);
     },
 
-    listOptions(list) {
-      console.log('List options');
-    },
-
     changeList(list) {
       // Select list in HTML
       this.currentList = list;
@@ -352,8 +332,6 @@ export default {
       event.target.parentElement.addEventListener('blur', () => {
         setTimeout(() => {
           this.moreOptions.hide();
-          // this.editingList = '';
-          // console.log(this.editingList, this.lists);
         }, 100);
       });
     },
