@@ -253,7 +253,7 @@ export default {
         this.$refs.table.reSort();
       }
       */
-      localStorage.setItem('list', list);
+      localStorage.setItem(`list-${this.type}`, list);
     },
 
     newList() {
@@ -359,9 +359,12 @@ export default {
         player.list = defaultList;
       }
       // Get unique lists
+      this.currentList = localStorage.getItem(`list-${this.type}`) || defaultList;
       this.lists = this.players.map(p => p.list).filter((value, index, self) => self.indexOf(value) === index);
+      if (!this.lists.includes(this.currentList)) {
+        this.lists.push(this.currentList);
+      }
       // Select last list
-      this.currentList = localStorage.getItem('list') || defaultList;
       this.changeList(this.currentList);
     }
   }
