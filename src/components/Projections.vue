@@ -38,7 +38,7 @@
             <button type="button" class="button-list" @click="changeList(list)">{{list}}</button>
             <button type="button" class="list-more" @click="showMoreOptions($event, list)"><img src="/img/more.svg" alt="..." width="24"></button>
           </template> 
-          <input v-else type="text" id="list-edit-input" :value="list || 'NEW LIST'">
+          <input v-else type="text" id="list-edit-input" autocomplete="off" :value="list || 'NEW LIST'">
         </div>
         <!--
         <button class="button-option button-list" :id="{'list-edit-button': list == editingList}" type="button" @click="changeList(list)" :class="{selected: list == currentList}">
@@ -152,6 +152,10 @@ export default {
     },
 
     savePlayers() {
+      for (let player of this.players) {
+        delete player.lastAdded;
+        delete player.stale;
+      }
       localStorage.setItem(this.type, JSON.stringify(this.players));
     },
 

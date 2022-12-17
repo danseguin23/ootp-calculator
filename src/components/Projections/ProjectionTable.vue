@@ -8,7 +8,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="player in players" :key="player" @click="editPlayer(player)" :class="{ 'player-new': player.lastAdded }">
+      <tr v-for="player in players" :key="player" @click="editPlayer(player)" :class="{ 'player-new': player.lastAdded, 'stale': player.stale }">
         <td><checkbox ref="checkbox" @click="clickCheckbox(player)" /></td>
         <td v-for="field in fields[type]" :key="field" :class="{ sorted: sortField == field.key }">{{field.display(player[field.key])}}</td>
       </tr>
@@ -61,16 +61,20 @@ export default {
   watch: {
     players(to, from) {
       if (to.length == (from.length + 1)) {
-        for (let player of to) {
-          if (from.includes(player)) {
-            player.lastAdded = false;
-          } else {
-            player.lastAdded = true;
+        if (to[0].list == from[0].list) {
+          let lastAdded;
+          for (let player of to) {
+            if (from.includes(player)) {
+              player.lastAdded = false;
+            } else {
+              player.lastAdded = true;
+              lastAdded = player;
+            }
           }
+          setTimeout(() => {
+            lastAdded.stale = true;
+          }, 100);
         }
-        setTimeout(() => {
-          document.getElementsByClassName('player-new')[0].classList.add('stale');
-        }, 100);
       }
     }
   },
