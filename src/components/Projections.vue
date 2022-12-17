@@ -54,7 +54,7 @@
       </div>
       <button class="new-list" type="button" @click="newList()"><img src="/img/add.svg" alt="+" width="24"></button>
     </div>
-    <projection-table ref="table" v-if="players.length > 0 && loaded" :type="type" :players="currentPlayers" />
+    <projection-table ref="table" v-if="players.length > 0 && loaded" :type="type" :players="currentPlayers" :allPlayers="players"/>
   </form>
 </template>
 
@@ -239,9 +239,11 @@ export default {
       // Select list in HTML
       this.currentList = list;
       this.currentPlayers = this.players.filter(p => p.list == list);
+      /*
       if (this.$refs.table) {
         this.$refs.table.reSort();
       }
+      */
       localStorage.setItem('list', list);
     },
 

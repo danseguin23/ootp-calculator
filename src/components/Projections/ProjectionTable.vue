@@ -28,7 +28,8 @@ export default {
   components: { Checkbox },
   props: {
     type: String,
-    players: Array
+    players: Array,  // Just players from selected list
+    allPlayers: Array
   },
   data() {
     return {
@@ -150,15 +151,19 @@ export default {
         this.sortDirection = direction;
       }
       this.sortField = field;
-      this.players.sort((a, b) => {
-        if (a[field] > b[field]) {
-          return this.sortDirection;
-        } else if (b[field] > a[field]) {
-          return -this.sortDirection;
-        } else {
-          return 0;
-        }
-      });
+      const sortArray = (array) => {
+        array.sort((a, b) => {
+          if (a[field] > b[field]) {
+            return this.sortDirection;
+          } else if (b[field] > a[field]) {
+            return -this.sortDirection;
+          } else {
+            return 0;
+          }
+        });
+      }
+      sortArray(this.players);
+      sortArray(this.allPlayers);
     },
     reSort() {
       setTimeout(() => {
