@@ -15,6 +15,12 @@
         <label>Ratings Scale</label>
         <ratings-scale ref="scale" />
       </div>
+      <div class="column">
+        <label>Target List</label>
+        <select v-model="targetList">
+          <option v-for="list of lists">{{list}}</option>
+        </select>
+      </div>
       <div class="column" :style="option == 'option-single' ? 'width: 0; opacity: 0' : 'width: 10rem;'">
         <label>Team</label>
         <select v-model="team" style="width: 100%">
@@ -22,8 +28,8 @@
         </select>
       </div>
     </div>
-    <input-single v-if="option == 'option-single'" :type="type" :scale="scale.selected" :teams="teams" :list="currentList" ref="single" />
-    <input-batch v-if="option == 'option-batch'" :type="type" :scale="scale.selected" :teams="teams" :list="currentList" ref="batch" />
+    <input-single v-if="option == 'option-single'" :type="type" :scale="scale.selected" :teams="teams" :list="targetList" ref="single" />
+    <input-batch v-if="option == 'option-batch'" :type="type" :scale="scale.selected" :teams="teams" :list="targetList" ref="batch" />
     <div class="row-flex">
       <button class="button-submit" type="submit"> {{ editing ? 'Save' : 'Submit' }}</button>
       <button class="button-clear" type="button" @click="clear()" v-if="!editing">Clear</button>
@@ -71,6 +77,7 @@ export default {
       currentList: '',
       editingList: '',
       optionList: '',
+      targetList: '',
       currentPlayers: [],
       editing: null,
       teams: [],
@@ -170,6 +177,9 @@ export default {
       if (result.error) {
         this.raiseError(result.error);
       } else {
+        if (this.targetList != this.currentList) {
+          this.changeList(this.targetList);
+        }
         this.players = this.players.concat(result.players);
         setTimeout(() => {
           this.$refs.table.reSort();
@@ -248,6 +258,7 @@ export default {
       */
       localStorage.setItem(`list-${this.type}`, list);
       this.editingList = '';
+      this.targetList = list;
     },
 
     newList() {
@@ -540,6 +551,7 @@ select {
   transition: all 0.5s;
   transition-property: width, opacity;
   overflow: hidden;
+  width: 10rem;
 }
 
 #options .column label {
