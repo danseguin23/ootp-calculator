@@ -54,7 +54,7 @@
       </div>
       <button class="new-list" type="button" @click="newList()"><img src="/img/add.svg" alt="+" width="24"></button>
     </div>
-    <projection-table ref="table" v-if="players.length > 0 && loaded" :type="type" :players="currentPlayers" :allPlayers="players"/>
+    <projection-table ref="table" v-if="loaded" :type="type" :players="currentPlayers" :allPlayers="players"/>
   </form>
 </template>
 

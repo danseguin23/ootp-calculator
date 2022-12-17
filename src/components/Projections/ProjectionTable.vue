@@ -12,6 +12,9 @@
         <td><checkbox ref="checkbox" @click="clickCheckbox(player)" /></td>
         <td v-for="field in fields[type]" :key="field" :class="{ sorted: sortField == field.key }">{{field.display(player[field.key])}}</td>
       </tr>
+      <tr v-if="players.length == 0" class="disabled">
+        <td :colspan="fields[type].length + 1">No Players Added</td>
+      </tr>
     </tbody>
   </table>
 </div>
@@ -187,6 +190,14 @@ export default {
 
 .table-sortable td {
   border-bottom: 1px solid var(--color-transparent);
+}
+
+.table-sortable tr.disabled {
+  pointer-events: none;
+}
+
+.table-sortable tr.disabled td {
+  font-style: italic;
 }
 
 /*
