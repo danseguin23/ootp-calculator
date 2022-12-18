@@ -382,8 +382,6 @@ export default {
         return;
       }
       let found = this.players.filter(p => p.list == this.optionList);
-      console.log(found);
-      console.log(this.players);
       let conf = found.length == 0;
       if (!conf) {
         conf = confirm('Are you sure you want to delete this list? This action cannot be undone!');
