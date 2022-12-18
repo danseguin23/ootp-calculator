@@ -396,7 +396,11 @@ export default {
       this.savePlayers();
       // Change list
       if (this.optionList == this.currentList) {
-        this.changeList(this.lists[0]);
+        if (foundIndex >= 1) {
+          this.changeList(this.lists[foundIndex - 1]);
+        } else {
+          this.changeList(this.lists[0]);
+        }
       }
     },
 

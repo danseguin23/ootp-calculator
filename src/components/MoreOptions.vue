@@ -1,5 +1,5 @@
 <template>
-  <div id="more-options" class="more-options">
+  <div id="more-options" class="more-options" @blur="hide()">
     <div class="more-options-item" @click="edit()">
       <h3>Rename</h3>
       <img src="/img/edit.svg" alt="" width="12">
