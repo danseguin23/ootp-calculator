@@ -379,7 +379,13 @@ export default {
       if (foundIndex < 0) {
         return;
       }
-      let conf = confirm('Are you sure you want to delete this list? This action cannot be undone!');
+      let found = this.players.filter(p => p.list == this.optionList);
+      console.log(found);
+      console.log(this.players);
+      let conf = found.length == 0;
+      if (!conf) {
+        conf = confirm('Are you sure you want to delete this list? This action cannot be undone!');
+      }
       if (conf) {
         this.lists.splice(foundIndex, 1);
       }
@@ -388,9 +394,7 @@ export default {
       this.savePlayers();
       // Change list
       if (this.optionList == this.currentList) {
-        if (this.players.length > 0) {
-          this.changeList(this.players[0].list);
-        }
+        this.changeList(this.lists[0]);
       }
     },
 
