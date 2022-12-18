@@ -335,6 +335,11 @@ export default {
           if (isNew || this.currentList == oldList) {
             this.changeList(newList);
           }
+          if (isNew) {
+            this.$analytics.logEvent(this.$instance, 'list-new');
+          } else {
+            this.$analytics.logEvent(this.$instance, 'list-rename');
+          }
         }
       }
       const cancelList = (event) => {
@@ -388,6 +393,7 @@ export default {
       }
       if (conf) {
         this.lists.splice(foundIndex, 1);
+        this.$analytics.logEvent(this.$instance, 'list-delete');
       }
       // TODO: Remove players, update localStorage
       this.players = this.players.filter(p => p.list != this.optionList);
