@@ -149,6 +149,7 @@ export default {
       document.body.appendChild(element);
       element.click();
       document.body.removeChild(element);
+      this.$analytics.logEvent(this.$instance, 'download-csv');
     },
     // Sorts the table
     sort(field, direction) {
