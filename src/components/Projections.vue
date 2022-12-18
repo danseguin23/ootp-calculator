@@ -425,7 +425,8 @@ export default {
       if (this.lists.length == 0) {
         this.lists = this.players.map(p => p.list).filter((value, index, self) => self.indexOf(value) === index);
         this.saveLists();
-        if (this.players) {
+        let welcome = Boolean(localStorage.getItem('welcome-lists'));
+        if (this.players && !welcome) {
           this.welcome = true;
         }
       }
@@ -434,6 +435,7 @@ export default {
     },
 
     closeWelcome() {
+      localStorage.setItem('welcome-lists', 'true');
       this.welcome = false;
     }
   }
