@@ -1,5 +1,4 @@
 <template>
-  <welcome v-if="welcome" />
   <div id="header">
     <router-link to="/">OOTP CALCULATOR</router-link>
   </div>
@@ -65,6 +64,7 @@ body {
   --color-gray: #ccc;
   --color-dark: #001429;
   --color-translucent: rgba(0, 20, 41, 0.8);
+  --color-translucent-dark: rgba(0, 10, 21, 0.8);
   --gradient-primary: linear-gradient(#25377B, #242F5E);
   --gradient-primary-vertical: linear-gradient(#242F5E, #242F5E);
   --gradient-secondary: linear-gradient(#FBF013, #F5CC00);

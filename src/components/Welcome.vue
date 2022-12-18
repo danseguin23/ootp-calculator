@@ -1,14 +1,15 @@
 <template>
   <div id="welcome">
-    <h1>Welcome to the new OOTP Calculator!</h1>
-    <p>In addition to a visual overhaul, I've updated formulas and added some new features. Most notably: batch projections! Be sure to try that out!</p>
-    <p>If you find any issues with the site or have any comments you want to share, please reach out! Contact info is in the site footer.</p>
+    <h1>Introducing: Projection Lists!</h1>
+    <p>Now, you can separate your projections into different lists.</p>
+    <p>Maybe you want a list for free agents? A list for draft prospects?<br>Different lists for different saves? The world is your oyster!</p>
     <button class="button-submit" @click="$parent.closeWelcome()">Let's Go!</button>
   </div>
 </template>
 
 <script>
 export default {
+  name: 'Welcome'
 }
 </script>
 
@@ -17,11 +18,13 @@ export default {
   position: fixed;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.85);
+  background-color: var(--color-translucent-dark);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  z-index: 1;
+  z-index: 20;
   padding-top: min(162px, 25vh);
+  left: 0;
+  top: 0;
 }
 
 #welcome p {

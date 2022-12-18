@@ -1,5 +1,6 @@
 <template>
   <MoreOptions ref="moreOptions"/>
+  <Welcome v-if="welcome"/>
   <h1>OOTP {{ title }} Projections</h1>
   <div id="overview">
     <p>By entering current player ratings, the projection calculator will determine projected full-season stats for the player.</p>
@@ -12,14 +13,14 @@
   <form @submit="submit($event)">
     <div id="options">
       <div class="column">
-        <label>Ratings Scale</label>
-        <ratings-scale ref="scale" />
-      </div>
-      <div class="column">
         <label>Target List</label>
         <select v-model="targetList">
           <option v-for="list of lists" :label="proper(list)">{{list}}</option>
         </select>
+      </div>
+      <div class="column">
+        <label>Ratings Scale</label>
+        <ratings-scale ref="scale" />
       </div>
       <div class="column" :style="option == 'option-single' ? 'width: 0; opacity: 0' : 'width: 10rem;'">
         <label>Team</label>
@@ -58,13 +59,13 @@ import RatingsScale from '@/components/Projections/RatingsScale.vue';
 import InputBatch from '@/components/Projections/InputBatch.vue';
 import InputSingle from '@/components/Projections/InputSingle.vue';
 import ProjectionTable from '@/components/Projections/ProjectionTable.vue';
-import MoreOptions from './MoreOptions.vue';
+import MoreOptions from '@/components/MoreOptions.vue';
+import Welcome from '@/components/Welcome.vue';
 import { getTeams } from '../data-manager';
-import { tsUndefinedKeyword } from '@babel/types';
 
 export default {
   name: 'Projections',
-  components: { RatingsScale, InputBatch, InputSingle, ProjectionTable, MoreOptions },
+  components: { RatingsScale, InputBatch, InputSingle, ProjectionTable, MoreOptions, Welcome },
   props: {
     type: String
   },
@@ -84,7 +85,8 @@ export default {
       teams: [],
       team: '-',
       loaded: false,
-      moreOptions: null
+      moreOptions: null,
+      welcome: false
     }
   },
   computed: {
@@ -418,16 +420,19 @@ export default {
       // Get unique lists
       this.currentList = localStorage.getItem(`list-${this.type}`) || defaultList;
       this.lists = this.loadLists();
-      if (!this.lists) {
+      if (this.lists.length == 0) {
         this.lists = this.players.map(p => p.list).filter((value, index, self) => self.indexOf(value) === index);
         this.saveLists();
-      }
-      if (!this.lists.includes(this.currentList)) {
-        this.lists.push(this.currentList);
-        this.saveLists();
+        if (this.players) {
+          this.welcome = true;
+        }
       }
       // Select last list
       this.changeList(this.currentList);
+    },
+
+    closeWelcome() {
+      this.welcome = false;
     }
   }
 }
