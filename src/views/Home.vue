@@ -15,8 +15,23 @@ import HomeLink from '../components/HomeLink.vue';
 export default {
   name: 'Home',
   components: { HomeLink },
+  data() {
+    return {
+      images: []
+    }
+  },
   created() {
     document.title = 'OOTP Calculator';
+  },
+  mounted() {
+    // Pre-load hover images
+    let urls = ['/img/banner-batter-projections-hover.svg', '/img/banner-position-calculator-hover.svg',
+    '/img/banner-pitcher-projections-hover.svg', '/img/banner-about-hover.svg'];
+    for (let url of urls) {
+      let img = new Image();
+      img.src = url;
+      this.images.push(img);
+    }
   }
 }
 </script>

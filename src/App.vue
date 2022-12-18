@@ -1,5 +1,4 @@
 <template>
-  <welcome v-if="welcome" />
   <div id="header">
     <router-link to="/">OOTP CALCULATOR</router-link>
   </div>
@@ -7,29 +6,16 @@
   <div class="container content">
     <router-view/>
   </div>
-  <div id="footer">
-    <h4>Contact</h4>
-    <div id="contact">
-      <a href="mailto:danielseguin23@gmail.com?subject=OOTP Calculator" target="_blank"><img src="/img/mail.svg" alt="Email" width="24"></a>
-      <a href="https://twitter.com/danseguin23" target="_blank"><img src="/img/twitter.svg" alt="Twitter" width="24"></a>
-      <a href="https://www.reddit.com/message/compose?to=dangraphs&subject=OOTP%20Calculator" target="_blank"><img src="/img/reddit.svg" alt="Reddit" width="24"></a>
-      <a href="https://github.com/danseguin23/ootp-calculator" target="_blank"><img src="/img/github.svg" alt="GitHub" width="24"></a>
-    </div>
-    <div class="container-donate">
-      <a class="button-donate" href="https://www.paypal.com/donate/?business=VF3BSSQ62ULEU&no_recurring=0&item_name=Your+donation+helps+me+keep+the+OOTP+Calculator+up+and+running.+Thanks%21&currency_code=USD" target="_blank">Support This Site</a>
-    </div>
-  </div>
-  <div id="copy">
-    &copy; 2022 Daniel C. Seguin
-  </div>
+  <AppFooter />
 </template>
 <script>
 import Navbar from '@/components/Navbar.vue';
 import Welcome from '@/components/Welcome.vue';
+import AppFooter from './components/AppFooter.vue';
 
 export default {
   name: 'App',
-  components: { Navbar, Welcome },
+  components: { Navbar, Welcome, AppFooter },
   data() {
     return {
       welcome: false
@@ -63,6 +49,7 @@ export default {
 /* For themes */
 
 body {
+  position: relative;
   --font-sans: 'Barlow Condensed', 'Tahoma', sans-serif;
   --font-mono: 'Source Code Pro', monospace;
   --color-primary: #242E5D;
@@ -77,6 +64,7 @@ body {
   --color-gray: #ccc;
   --color-dark: #001429;
   --color-translucent: rgba(0, 20, 41, 0.8);
+  --color-translucent-dark: rgba(0, 10, 21, 0.8);
   --gradient-primary: linear-gradient(#25377B, #242F5E);
   --gradient-primary-vertical: linear-gradient(#242F5E, #242F5E);
   --gradient-secondary: linear-gradient(#FBF013, #F5CC00);
@@ -130,17 +118,6 @@ body {
   flex-direction: column;
 }
 
-#copy {
-  background-color: var(--color-translucent);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  padding: 6px 0;
-  position: fixed;
-  bottom: 0px;
-  width: 100%;
-  font-size: 16px;
-}
-
 #footer {
   background-color: var(--color-translucent);
   backdrop-filter: blur(4px);
@@ -164,6 +141,7 @@ body {
 }
 
 .content {
+  /*max-width: 1080px;*/
   max-width: 67.5rem;
   margin: auto;
   margin-bottom: 3rem;
@@ -221,16 +199,19 @@ option {
   background-image: var(--gradient-secondary);
 }
 
+/*
 .button-submit:hover {
   background-image: var(--gradient-secondary-hover);
 }
-
-/*
-.button-submit:hover:not(:disabled) {
-  color: var(--color-secondary);
-  background-color: black;
-}
 */
+
+.button-submit:disabled, .button-clear:disabled {
+  opacity: 0.5;
+}
+
+.button-submit:hover:not(:disabled) {
+  background-image: var(--gradient-secondary-hover);
+}
 
 .button-clear {
   color: black;
@@ -272,36 +253,8 @@ option {
   background-image: var(--gradient-primary-hover);
 }
 
-.button-donate {
-  margin: auto;
-  padding: 3px 16px 4px 16px;
-  margin-bottom: 0;
-  margin-top: 120px !important;
-  background: #FFD301;
-  font-size: 0.875rem;
-  font-family: PayPalSansSmall-Regular,Helvetica Neue,Arial,sans-serif;
-  font-weight: 700;
-  line-height: 22px;
-  -webkit-font-smoothing: antialiased;
-  color: #000;
-  text-align: center;
-  text-decoration: none;
-  cursor: pointer;
-  border-radius: 25px;
-  border: none;
-  box-sizing: border-box;
-}
-
-.button-donate:hover {
-  background: #E6BF00;
-}
-
 .h4 {
   margin-bottom: .25rem;
-}
-
-.container-donate {
-  margin-top: 18px;
 }
 
 </style>

@@ -59,6 +59,7 @@ const lookup_pos = {
 }
 
 export class Batter {
+  list;
   // Player Info
   team;
   position;
@@ -164,6 +165,7 @@ export class Batter {
           throw 'Invalid input! Ratings cannot be left blank.'
         }
       }
+      this.list = String(player.list);
       this.name = String(player.name);
       this.position = String(player.position);
       this.team = String(player.team);
@@ -278,6 +280,7 @@ export class Batter {
 }
 
 export class Pitcher {
+  list;
   // Player Info
   team;
   position;
@@ -374,6 +377,7 @@ export class Pitcher {
           throw 'Invalid input! Ratings cannot be left blank.'
         }
       }
+      this.list = String(player.list);
       this.name = String(player.name);
       this.position = String(player.position);
       this.team = String(player.team);

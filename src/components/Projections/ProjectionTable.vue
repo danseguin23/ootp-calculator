@@ -8,15 +8,18 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="player in players" :key="player" @click="editPlayer(player)" :class="{ 'player-new': player.lastAdded }">
+      <tr v-for="player in players" :key="player" @click="editPlayer(player)" :class="{ 'player-new': player.lastAdded, 'stale': player.stale }">
         <td><checkbox ref="checkbox" @click="clickCheckbox(player)" /></td>
         <td v-for="field in fields[type]" :key="field" :class="{ sorted: sortField == field.key }">{{field.display(player[field.key])}}</td>
+      </tr>
+      <tr v-if="players.length == 0" class="disabled">
+        <td :colspan="fields[type].length + 1">No Players Added</td>
       </tr>
     </tbody>
   </table>
 </div>
-<button class="button-submit" type="button" @click="download()">Download CSV</button>
-<button class="button-clear" type="button" @click="deleteSelected()">{{buttonLabel}}</button>
+<button class="button-submit" type="button" @click="download()" :disabled="players.length == 0">Download CSV</button>
+<button class="button-clear" type="button" @click="deleteSelected()" :disabled="players.length == 0">{{buttonLabel}}</button>
 </template>
 
 <script>
@@ -28,7 +31,8 @@ export default {
   components: { Checkbox },
   props: {
     type: String,
-    players: Array
+    players: Array,  // Just players from selected list
+    allPlayers: Array
   },
   data() {
     return {
@@ -59,17 +63,21 @@ export default {
   },
   watch: {
     players(to, from) {
-      if (to.length == (from.length + 1)) {
-        for (let player of to) {
-          if (from.includes(player)) {
-            player.lastAdded = false;
-          } else {
-            player.lastAdded = true;
+      if (to.length == (from.length + 1) && from.length >= 1) {
+        if (to[0].list == from[0].list) {
+          let lastAdded;
+          for (let player of to) {
+            if (from.includes(player)) {
+              player.lastAdded = false;
+            } else {
+              player.lastAdded = true;
+              lastAdded = player;
+            }
           }
+          setTimeout(() => {
+            lastAdded.stale = true;
+          }, 100);
         }
-        setTimeout(() => {
-          document.getElementsByClassName('player-new')[0].classList.add('stale');
-        }, 100);
       }
     }
   },
@@ -141,6 +149,7 @@ export default {
       document.body.appendChild(element);
       element.click();
       document.body.removeChild(element);
+      this.$analytics.logEvent(this.$instance, 'download-csv');
     },
     // Sorts the table
     sort(field, direction) {
@@ -150,15 +159,19 @@ export default {
         this.sortDirection = direction;
       }
       this.sortField = field;
-      this.players.sort((a, b) => {
-        if (a[field] > b[field]) {
-          return this.sortDirection;
-        } else if (b[field] > a[field]) {
-          return -this.sortDirection;
-        } else {
-          return 0;
-        }
-      });
+      const sortArray = (array) => {
+        array.sort((a, b) => {
+          if (a[field] > b[field]) {
+            return this.sortDirection;
+          } else if (b[field] > a[field]) {
+            return -this.sortDirection;
+          } else {
+            return 0;
+          }
+        });
+      }
+      sortArray(this.players);
+      sortArray(this.allPlayers);
     },
     reSort() {
       setTimeout(() => {
@@ -178,6 +191,14 @@ export default {
 
 .table-sortable td {
   border-bottom: 1px solid var(--color-transparent);
+}
+
+.table-sortable tr.disabled {
+  pointer-events: none;
+}
+
+.table-sortable tr.disabled td {
+  font-style: italic;
 }
 
 /*
