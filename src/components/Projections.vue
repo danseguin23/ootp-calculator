@@ -128,6 +128,9 @@ export default {
   },
   methods: {
     proper(list) {
+      if (list == '') {
+        return '';
+      }
       let split = list.split(' ');
       let proper = ''
       for (let segment of split) {
@@ -172,7 +175,6 @@ export default {
 
     loadLists() {
       let item = localStorage.getItem(`lists-${this.type}`);
-      console.log(item);
       if (item) {
         return JSON.parse(item);
       } else {

@@ -141,7 +141,8 @@ body {
 }
 
 .content {
-  max-width: 1080px;
+  /*max-width: 1080px;*/
+  max-width: 67.5rem;
   margin: auto;
   margin-bottom: 3rem;
 }
