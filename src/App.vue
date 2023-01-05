@@ -1,4 +1,5 @@
 <template>
+  <Donate v-if="welcome" />
   <div id="header">
     <router-link to="/">OOTP CALCULATOR</router-link>
   </div>
@@ -10,12 +11,12 @@
 </template>
 <script>
 import Navbar from '@/components/Navbar.vue';
-import Welcome from '@/components/Welcome.vue';
+import Donate from '@/components/Donate.vue';
 import AppFooter from './components/AppFooter.vue';
 
 export default {
   name: 'App',
-  components: { Navbar, Welcome, AppFooter },
+  components: { Navbar, Donate, AppFooter },
   data() {
     return {
       welcome: false
@@ -28,8 +29,10 @@ export default {
   },
   created() {
     let today = new Date();
-    let expire = new Date('2022-08-15');
-    if (localStorage.getItem('welcome') !== 'true' && today < expire) {
+    let expire = new Date('2023-01-31');
+    let donate = localStorage.getItem('donate') === 'true';
+    let welcome = localStorage.length > 0;
+    if (welcome && !donate && today < expire) {
       this.welcome = true;
     } else {
       this.welcome = false;
@@ -39,7 +42,7 @@ export default {
   methods: {
     closeWelcome() {
       this.welcome = false;
-      localStorage.setItem('welcome', 'true');
+      localStorage.setItem('donate', 'true');
     }
   }
 }
