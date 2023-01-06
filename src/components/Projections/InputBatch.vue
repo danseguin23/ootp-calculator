@@ -10,6 +10,7 @@
     <li>Select and copy the contents of the table.</li>
     <li>Paste in the box below, then submit.</li>
   </ol>
+  <p><strong>Tip:</strong> if an error occurs, make sure the correct view is selected, and that all columns are copied.</p>
 </div>
 <textarea id="input" type="file" rows="15" v-model="input"></textarea>
 </template>
@@ -151,7 +152,7 @@ export default {
       this.showHelp = !this.showHelp;
       let help = document.getElementById('help');
       if (this.showHelp) {
-        help.style = 'max-height: 10rem;';
+        help.style = 'max-height: 13rem;';
       } else {
         help.style = 'max-height: 0px; opacity: 0;';
       }
