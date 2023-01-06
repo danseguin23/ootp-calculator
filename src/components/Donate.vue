@@ -4,16 +4,26 @@
     <p>The OOTP Calculator domain is up for its yearly renewal, so I am once again asking for your financial support.</p>
     <p>To date, I've been funding the site mostly from my own pocket, so I'm hoping you could spare a few bucks. Every little bit is greatly appreciated!</p>
     <p>Cheers,<br>Dan</p>
-    <a @click="$parent.closeWelcome()" class="button-donate" href="https://www.paypal.com/donate/?business=VF3BSSQ62ULEU&no_recurring=0&item_name=Your+donation+helps+me+keep+the+OOTP+Calculator+up+and+running.+Thanks%21&currency_code=USD" target="_blank">Donate</a>
+    <a @click="closeDonate(true)" class="button-donate" href="https://www.paypal.com/donate/?business=VF3BSSQ62ULEU&no_recurring=0&item_name=Your+donation+helps+me+keep+the+OOTP+Calculator+up+and+running.+Thanks%21&currency_code=USD" target="_blank">Donate</a>
     <div class="sorry-container">
-      <button @click="$parent.closeWelcome()" class="sorry">Sorry, I'm broke too</button>
+      <button @click="closeDonate(false)" class="sorry">Sorry, I'm broke too</button>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'Welcome'
+  name: 'Welcome',
+  methods: {
+    closeDonate(isDonate) {
+      if (isDonate) {
+        this.$analytics.logEvent(this.$instance, `donate-true`);
+      } else {
+        this.$analytics.logEvent(this.$instance, `donate-false`);
+      }
+      this.$parent.closeWelcome();
+    }
+  }
 }
 </script>
 
