@@ -204,7 +204,7 @@ export default {
     submit(event) {
       event.preventDefault();
       try {
-        if ((this.htFt || this.htFt === '0') && (this.htIn || this.htIn === '0')) {
+        if ((this.htFt || this.htFt === 0) && (this.htIn || this.htIn === 0)) {
           this.player.height = 2.54 * (12 * this.htFt + +this.htIn);
         } else if (this.htCm) {
           this.player.height = +this.htCm;
