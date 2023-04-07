@@ -18,7 +18,7 @@ const formula_batting = {
   h3: { slope: [0.0006, 0.0009], intercept: [0.02, -0.01] },
   sba: { slope: [0.0009, 0.0018], intercept: [0, -0.09] },
   sb: { slope: [0.003, 0.003], intercept: [0.3, 0.3] },
-  zr: { slope: [0.12, 0.12], intercept: [-14, -14] }
+  zr: { slope: [0.14, 0.12], intercept: [-30, -14] }
 }
 
 // Formulas for pitching ratings
@@ -248,7 +248,7 @@ export class Batter {
     // Value
     let bat = run_pa * (opsp / 100 - 1) * pa;
     let bsr = run_sb * sb + run_cs * cs + run_ob * (h - h2 - h3 - hr + bb);
-    let def = zr + lookup_pos[this.position];
+    let def = zr + lookup_pos[this.position] * zrIndex;
     let war = (bat + bsr + def) / 10 + war_pa * pa;
     // Projected stats
     this.gp = 150;
