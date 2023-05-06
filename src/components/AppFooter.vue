@@ -4,7 +4,7 @@
     <div id="contact">
       <a href="mailto:danielseguin23@gmail.com?subject=OOTP Calculator" target="_blank"><img src="/img/mail.svg" alt="Email" width="24"></a>
       <a href="https://twitter.com/danseguin23" target="_blank"><img src="/img/twitter.svg" alt="Twitter" width="24"></a>
-      <a href="https://www.reddit.com/message/compose?to=dangraphs&subject=OOTP%20Calculator" target="_blank"><img src="/img/reddit.svg" alt="Reddit" width="24"></a>
+      <!--<a href="https://www.reddit.com/message/compose?to=dangraphs&subject=OOTP%20Calculator" target="_blank"><img src="/img/reddit.svg" alt="Reddit" width="24"></a>-->
       <!--<a href="https://discord.com/users/dangraphs#0191" target="_blank"><img src="/img/discord.svg" alt="Discord" width="24"></a>-->
       <a href="https://github.com/danseguin23/ootp-calculator" target="_blank"><img src="/img/github.svg" alt="GitHub" width="24"></a>
     </div>
