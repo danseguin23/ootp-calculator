@@ -1,5 +1,6 @@
 <template>
-  <Donate v-if="welcome" />
+  <!--<Donate v-if="1" />-->
+  <Welcome v-if="welcome" />
   <div id="header">
     <router-link to="/">OOTP CALCULATOR</router-link>
   </div>
@@ -10,13 +11,14 @@
   <AppFooter />
 </template>
 <script>
-import Navbar from '@/components/Navbar.vue';
-import Donate from '@/components/Donate.vue';
+import Navbar from './components/Navbar.vue';
+import Donate from './components/Donate.vue';
 import AppFooter from './components/AppFooter.vue';
+import Welcome from './components/Welcome.vue';
 
 export default {
   name: 'App',
-  components: { Navbar, Donate, AppFooter },
+  components: { Navbar, Donate, AppFooter, Welcome },
   data() {
     return {
       welcome: false
@@ -28,9 +30,10 @@ export default {
     }
   },
   created() {
+    localStorage.removeItem('donate');
     let today = new Date();
-    let expire = new Date('2023-01-31');
-    let donate = localStorage.getItem('donate') === 'true';
+    let expire = new Date('2023-05-31');
+    let donate = localStorage.getItem('fresh') === 'true';
     let welcome = localStorage.length > 0;
     if (welcome && !donate && today < expire) {
       this.welcome = true;
@@ -42,7 +45,7 @@ export default {
   methods: {
     closeWelcome() {
       this.welcome = false;
-      localStorage.setItem('donate', 'true');
+      localStorage.setItem('fresh', 'true');
     }
   }
 }
@@ -55,24 +58,24 @@ body {
   position: relative;
   --font-sans: 'Barlow Condensed', 'Tahoma', sans-serif;
   --font-mono: 'Source Code Pro', monospace;
-  --color-primary: #242E5D;
+  --color-primary: #1E6402;
   --color-secondary: #FFD302;
-  --color-primary-lighter: #25377A;
-  --color-primary-darker: #1B2546;
+  --color-primary-lighter: #2B9602;
+  --color-primary-darker: #173408;
   --color-secondary-lighter: #FBF013;
   --color-secondary-darker: #E6BF00;
   --color-contrast: #c41230;
   --color-gray: #ccc;
-  --color-dark: #001429;
-  --color-translucent: rgba(0, 20, 41, 0.8);
-  --color-translucent-dark: rgba(0, 10, 21, 0.8);
-  
+  --color-dark: #10220A;
+  --color-translucent: rgba(16, 34, 10, 0.8);
+  --color-translucent-dark: rgba(9, 16, 6, 0.8);
+
   --gradient-primary: linear-gradient(var(--color-primary-lighter), var(--color-primary));
   --gradient-primary-vertical: linear-gradient(var(--color-primary), var(--color-primary));
-  --gradient-secondary: linear-gradient(var(--color-secondary-lighter), var(--color-secondary));
-  --gradient-tertiary: linear-gradient(#d1d1d1, #bfbfbf);
   --gradient-primary-hover: linear-gradient(var(--color-primary-darker), var(--color-primary));
+  --gradient-secondary: linear-gradient(var(--color-secondary-lighter), var(--color-secondary));
   --gradient-secondary-hover: linear-gradient(var(--color-secondary-darker), var(--color-secondary));
+  --gradient-tertiary: linear-gradient(#d1d1d1, #bfbfbf);
   --gradient-tertiary-hover: linear-gradient(#ababab, #bfbfbf);
 }
 
@@ -102,8 +105,10 @@ body.theme-dark {
   --color-primary: #488ECB;
   --color-secondary: #EF4E68;
   */
-  background-image: url('/img/background.jpg');
+  background-image: url('/img/background-24.jpg');
   background-attachment: fixed;
+  background-position-x: center;
+  background-position-y: top;
 }
 
 body {
@@ -188,6 +193,15 @@ option {
   border: 2px solid black;
 }
 
+.welcome-submit {
+  background-image: var(--gradient-primary) !important;
+  color: white !important;
+}
+
+.welcome-submit:hover {
+  background-image: var(--gradient-primary-hover) !important;
+}
+
 .button-help {
   color: white;
   /*background-color: var(--color-primary);*/
@@ -250,7 +264,7 @@ option {
   font-style: italic;
   text-decoration: none;
   font-size: 2.5rem;
-  text-shadow: 1px 1px var(--color-secondary-hover);
+  text-shadow: 1px 1px #4a4a4a;
 }
 
 #header a:hover {

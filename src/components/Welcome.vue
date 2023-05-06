@@ -1,9 +1,8 @@
 <template>
   <div id="welcome">
-    <h1>Introducing: Projection Lists!</h1>
-    <p>Now, you can separate your projections into different lists.</p>
-    <p>Maybe you want a list for free agents? A list for draft prospects?<br>Different lists for different saves? The world is your oyster!</p>
-    <button class="button-submit" @click="$parent.closeWelcome()">Let's Go!</button>
+    <h1>New Year, New Me!</h1>
+    <p>Okay, okay, I know it's May. But thanks to updated formulas and a fresh coat of paint, the OOTP Calculator is now ready to take on OOTP 24 saves.</p>
+    <button class="button-submit welcome-submit" @click="$parent.closeWelcome()">Let's Go!</button>
   </div>
 </template>
 
@@ -13,7 +12,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 #welcome {
   position: fixed;
   width: 100vw;
