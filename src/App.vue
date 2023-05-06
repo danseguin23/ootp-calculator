@@ -56,27 +56,27 @@ body {
   --font-sans: 'Barlow Condensed', 'Tahoma', sans-serif;
   --font-mono: 'Source Code Pro', monospace;
   --color-primary: #242E5D;
-  --color-secondary: #FFD301;
-  --color-primary-hover: #25377A;
-  --color-secondary-hover: #E6BF00;
-  /*
-  --color-primary: #2b669a;
-  --color-secondary: #c41230;
-  */
+  --color-secondary: #FFD302;
+  --color-primary-lighter: #25377A;
+  --color-primary-darker: #1B2546;
+  --color-secondary-lighter: #FBF013;
+  --color-secondary-darker: #E6BF00;
   --color-contrast: #c41230;
   --color-gray: #ccc;
   --color-dark: #001429;
   --color-translucent: rgba(0, 20, 41, 0.8);
   --color-translucent-dark: rgba(0, 10, 21, 0.8);
-  --gradient-primary: linear-gradient(#25377B, #242F5E);
-  --gradient-primary-vertical: linear-gradient(#242F5E, #242F5E);
-  --gradient-secondary: linear-gradient(#FBF013, #F5CC00);
+  
+  --gradient-primary: linear-gradient(var(--color-primary-lighter), var(--color-primary));
+  --gradient-primary-vertical: linear-gradient(var(--color-primary), var(--color-primary));
+  --gradient-secondary: linear-gradient(var(--color-secondary-lighter), var(--color-secondary));
   --gradient-tertiary: linear-gradient(#d1d1d1, #bfbfbf);
-  --gradient-primary-hover: linear-gradient(#1B2546, #242F5E);
-  --gradient-secondary-hover: linear-gradient(#D6B300, #FFD302);
+  --gradient-primary-hover: linear-gradient(var(--color-primary-darker), var(--color-primary));
+  --gradient-secondary-hover: linear-gradient(var(--color-secondary-darker), var(--color-secondary));
   --gradient-tertiary-hover: linear-gradient(#ababab, #bfbfbf);
 }
 
+/*
 body.theme-light {
   --color-background: #fff;
   --color-text: var(--color-dark);
@@ -87,6 +87,7 @@ body.theme-light {
   --color-highlight: #233142;
   --color-red: #E91639;
 }
+*/
 
 body.theme-dark {
   --color-background: var(--color-dark);
