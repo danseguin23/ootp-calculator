@@ -112,7 +112,7 @@ body.theme-dark {
 }
 
 body {
-  background-color: #151c38;
+  background-color: #12230b;
   color: var(--color-text);
 }
 
