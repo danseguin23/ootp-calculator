@@ -30,11 +30,9 @@ export default {
     }
   },
   created() {
-    localStorage.removeItem('fresh');
     let today = new Date();
-    let expire = new Date('2024-12-31');
-    let donate = localStorage.getItem('fresh-27') === 'true';
-    // let welcome = localStorage.length > 0;
+    let expire = new Date('2024-06-31');
+    let donate = localStorage.getItem('fresh-25') === 'true';
     let welcome = true;
     if (welcome && !donate && today < expire) {
       this.welcome = true;
