@@ -10,27 +10,27 @@ const intercepts = [1.1, -1.75, -1.5, -1.05, -1.8, -1.3, -1.15, -1.25];
 
 // Formulas for batting ratings
 const formula_batting = {
-  avg: { slope: [0.0009, 0.0006], intercept: [0.155, 0.185] },
-  gap: { slope: [0.15, 0.15], intercept: [12.5, 12.5] },
-  hr: { slope: [0.15, 0.36], intercept: [0, -21] },
-  bb: { slope: [0.42, 0.84], intercept: [3, -39] },
-  so: { slope: [-1.44, -0.72], intercept: [280, 208] },
-  h3: { slope: [0.0006, 0.0009], intercept: [0.02, -0.01] },
-  sba: { slope: [0.0009, 0.0018], intercept: [0, -0.09] },
-  sb: { slope: [0.003, 0.003], intercept: [0.3, 0.3] },
-  zr: { slope: [0.12, 0.12], intercept: [-14, -14] }
+  avg: { slope: [0.0009, 0.0009], intercept: [0.145, 0.145] },  // Contact -> AVG
+  gap: { slope: [0.18, 0.18], intercept: [11, 11] },  // Gap ->  (2B + 3B) / AB * 550
+  hr: { slope: [0.3, 0.3], intercept: [-12, -12] },  // Power -> HR / AB * 550
+  bb: { slope: [0.6, 0.6], intercept: [-10, -10] },  // Discipline -> BB / AB * 550
+  so: { slope: [-1.2, -1.2], intercept: [270, 270] },  // Avoid K's -> SO / AB * 550
+  h3: { slope: [0.0006, 0.0009], intercept: [0.02, -0.01] },  // Speed -> 3B / (2B + 3B)
+  sba: { slope: [0.0009, 0.0009], intercept: [0.015, 0.015] },  // Speed -> (SB + CS) / (1B + BB + HBP)
+  sb: { slope: [0.003, 0.003], intercept: [0.3, 0.3] },  // Stealing -> SB / (SB + CS)
+  zr: { slope: [0.12, 0.12], intercept: [-14, -14] }  // Defense -> ZR
 }
 
 // Formulas for pitching ratings
 const formula_pitching = {
-  so: { slope: [0.9, 0.9], intercept: [30, 30] },
-  hr: { slope: [-0.12, -0.06], intercept: [30, 24] },
-  bb: { slope: [-0.6, -0.3], intercept: [112.5, 82.5] },
-  gssp: { slope: [0.01, 0], intercept: [0, 1]},
-  gsrp: { slope: [0, 0.005], intercept: [0, -0.5]},
-  absp: { slope: [0.12, 0.06], intercept: [8, 14] },
-  abrp: { slope: [0.03, 0.09], intercept: [3.5, -2.5] },
-  wsb: { slope: [-0.012, -0.006], intercept: [1.2, 0.6] },
+  so: { slope: [0.6, 0.6], intercept: [65, 64] },  // Stuff -> SO / AB * 550
+  hr: { slope: [-0.24, -0.24], intercept: [46, 46] },  // Movement -> HR / AB * 550
+  bb: { slope: [-0.42, -0.42], intercept: [100, 100] },  // Control -> BB / AB * 550
+  gssp: { slope: [0.01, 0], intercept: [0, 1]},  // Stamina -> GS / (G + GS)
+  gsrp: { slope: [0, 0.005], intercept: [0, -0.5]},  // Stamina -> GS / (G + GS)
+  absp: { slope: [0.12, 0.06], intercept: [8, 14] },  // Stamina -> AB / G
+  abrp: { slope: [0.03, 0.09], intercept: [3.5, -2.5] },  // Stamina -> AB / G
+  wsb: { slope: [-0.012, -0.006], intercept: [1.2, 0.6] },  // Hold -> wSB
 }
 
 // BABIP lookup for pitchers
@@ -188,13 +188,13 @@ export class Batter {
 
   calculateStats(parks) {
     // For ops and war and shit
-    const lg_obp = 0.315;
-    const lg_slg = 0.410;
-    const run_pa = 0.12;  
+    const lg_obp = 0.312;
+    const lg_slg = 0.409;
+    const run_pa = 0.121;  
     const run_sb = 0.23;
     const run_cs = -0.5;
     const run_ob = -0.003;
-    const war_pa = 0.003;
+    const war_pa = 0.0032;
     // Park factors
     let park = parks.find(p => p.abbr == this.team);
     let parkAvg;
@@ -226,18 +226,18 @@ export class Batter {
     let sbaPct = (this.speed * formula_batting.sba.slope[h3Index] + formula_batting.sba.intercept[h3Index]);
     let sbPct = (this.stealing * formula_batting.sb.slope[sbIndex] + formula_batting.sb.intercept[sbIndex]);
     let avg = (this.contact * formula_batting.avg.slope[avgIndex] + formula_batting.avg.intercept[avgIndex]) * parkAvg;
-    let gap = (this.gap * formula_batting.gap.slope[gapIndex] + formula_batting.gap.intercept[gapIndex]);
-    let hr = (this.power * formula_batting.hr.slope[hrIndex] + formula_batting.hr.intercept[hrIndex]) * parkHr;
-    let bb = (this.eye * formula_batting.bb.slope[bbIndex] + formula_batting.bb.intercept[bbIndex]);
-    let so = (this.avoidKs * formula_batting.so.slope[soIndex] + formula_batting.so.intercept[soIndex]);
+    let gap = Math.max((this.gap * formula_batting.gap.slope[gapIndex] + formula_batting.gap.intercept[gapIndex]), 0);
+    let hr = Math.max((this.power * formula_batting.hr.slope[hrIndex] + formula_batting.hr.intercept[hrIndex]) * parkHr, 0);
+    let bb = Math.max((this.eye * formula_batting.bb.slope[bbIndex] + formula_batting.bb.intercept[bbIndex]), 0);
+    let so = Math.max((this.avoidKs * formula_batting.so.slope[soIndex] + formula_batting.so.intercept[soIndex]), 0);
     let zr =  (this.defense * formula_batting.zr.slope[zrIndex] + formula_batting.zr.intercept[zrIndex]);
-    let h = avg * 550;
-    let h2 = gap * (1 - h3Pct) * park.doubles;
-    let h3 = gap * h3Pct * park.triples;
-    let sba = sbaPct * (h - h2 - h3 - hr + bb);
-    let sb = sba * sbPct;
-    let cs = sba * (1 - sbPct);
-    let pa = 550 + bb;
+    let h = Math.max(avg * 550, 0);
+    let h2 = Math.max(gap * (1 - h3Pct) * park.doubles, 0);
+    let h3 = Math.max(gap * h3Pct * park.triples, 0);
+    let sba = Math.max(sbaPct * (h - h2 - h3 - hr + bb), 0);
+    let sb = Math.max(sba * sbPct, 0);
+    let cs = Math.max(sba * (1 - sbPct), 0);
+    let pa = Math.max(550 + bb, 0);
     // Rates
     let obp = (h + bb) / pa;
     let slg = (h + h2 + 2 * h3 + 3 * hr) / 550;
@@ -397,11 +397,11 @@ export class Pitcher {
 
   calculateStats(parks) {
     // Constants, subject to change ig
-    const er_pct = 0.92;  // Earned runs per run
+    const er_pct = 0.93;  // Earned runs per run
     const rs_factor = 1.3;  // Multiply by AVG for RS% (maybe use wOBA or OBP?)
-    const lg_era = 4.25;
-    const lg_ra9 = 4.62;
-    const c_fip = 3.4;
+    const lg_era = 4.24;
+    const lg_ra9 = 4.56;
+    const c_fip = 3.38;
     const war_ip = 0.01;  // Multiply by innings for replacement
     // Park
     let park = parks.find(p => p.abbr == this.team);
@@ -424,17 +424,17 @@ export class Pitcher {
     let gp = 64 * (1 - gs / (1 + gs));
     ab = ab * gp;
     // Middle men / helpers / whatever
-    let so = (this.stuff * formula_pitching.so.slope[soIndex] + formula_pitching.so.intercept[soIndex]);
-    let hr = (this.movement * formula_pitching.hr.slope[hrIndex] + formula_pitching.hr.intercept[hrIndex]) * park.hr_overall;
-    let bb = (this.control * formula_pitching.bb.slope[bbIndex] + formula_pitching.bb.intercept[bbIndex]);
+    let so = Math.max((this.stuff * formula_pitching.so.slope[soIndex] + formula_pitching.so.intercept[soIndex]), 0);
+    let hr = Math.max((this.movement * formula_pitching.hr.slope[hrIndex] + formula_pitching.hr.intercept[hrIndex]) * park.hr_overall, 0);
+    let bb = Math.max((this.control * formula_pitching.bb.slope[bbIndex] + formula_pitching.bb.intercept[bbIndex]), 0);
     let wsb = (this.hold * formula_pitching.wsb.slope[wsbIndex] + formula_pitching.wsb.intercept[wsbIndex]);
     let babip = lookup_babip[this.groundFly] * park.avg_overall;
-    let h = babip * (550 - hr - so) + hr;
-    let ip = (550 - h) / 3;
+    let h = Math.max(babip * (550 - hr - so) + hr, 0);
     let avg = h / 550;
-    let rs = avg * rs_factor; 
-    let r = rs * (h - hr + bb) + hr + wsb;
-    let er = er_pct * r;
+    let ip = Math.max((550 - h) / 3, 0);
+    let rs = Math.max(avg * rs_factor, 0);
+    let r = Math.max(rs * (h - hr + bb) + hr + wsb, 0);
+    let er = Math.max(er_pct * r, 0);
     let era = er / ip * 9;
     let whip = (bb + h) / ip;
     let hr9 = hr / ip * 9;
