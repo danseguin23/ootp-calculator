@@ -4,7 +4,7 @@
   <h1>OOTP {{ title }} Projections</h1>
   <div id="overview">
     <p>By entering current player ratings, the projection calculator will determine projected full-season stats for the player.</p>
-    <p>The current edition of the projection calculator is best suited for 2023 MLB saves.</p>
+    <p>The current edition of the projection calculator is best suited for 2024 MLB saves.</p>
   </div>
   <div class="row-flex">
     <button class="button-option" id="option-single" @click="changeOption()">Single Input</button>

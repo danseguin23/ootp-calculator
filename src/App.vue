@@ -1,6 +1,6 @@
 <template>
   <!--<Donate v-if="1" />-->
-  <Welcome v-if="welcome" />
+  <Donate v-if="welcome" />
   <div id="header">
     <router-link to="/">OOTP CALCULATOR</router-link>
   </div>
@@ -30,11 +30,12 @@ export default {
     }
   },
   created() {
-    localStorage.removeItem('donate');
+    localStorage.removeItem('fresh');
     let today = new Date();
-    let expire = new Date('2023-05-31');
-    let donate = localStorage.getItem('fresh') === 'true';
-    let welcome = localStorage.length > 0;
+    let expire = new Date('2024-12-31');
+    let donate = localStorage.getItem('fresh-27') === 'true';
+    // let welcome = localStorage.length > 0;
+    let welcome = true;
     if (welcome && !donate && today < expire) {
       this.welcome = true;
     } else {
@@ -45,7 +46,7 @@ export default {
   methods: {
     closeWelcome() {
       this.welcome = false;
-      localStorage.setItem('fresh', 'true');
+      localStorage.setItem('fresh-25', 'true');
     }
   }
 }
@@ -58,17 +59,17 @@ body {
   position: relative;
   --font-sans: 'Barlow Condensed', 'Tahoma', sans-serif;
   --font-mono: 'Source Code Pro', monospace;
-  --color-primary: #1E6402;
-  --color-secondary: #FFD302;
-  --color-primary-lighter: #2B9602;
-  --color-primary-darker: #173408;
-  --color-secondary-lighter: #FBF013;
-  --color-secondary-darker: #E6BF00;
+  --color-primary: #06206f;
+  --color-secondary: #E88702;
+  --color-primary-lighter: #092991;
+  --color-primary-darker: #031447;
+  --color-secondary-lighter: #FFF398;
+  --color-secondary-darker: #CB6D00;
   --color-contrast: #c41230;
   --color-gray: #ccc;
-  --color-dark: #10220A;
-  --color-translucent: rgba(16, 34, 10, 0.8);
-  --color-translucent-dark: rgba(9, 16, 6, 0.8);
+  --color-dark: #181828;
+  --color-translucent: rgba(24, 24, 40, 0.8);
+  --color-translucent-dark: rgba(12, 12, 20, 0.8);
 
   --gradient-primary: linear-gradient(var(--color-primary-lighter), var(--color-primary));
   --gradient-primary-vertical: linear-gradient(var(--color-primary), var(--color-primary));
@@ -105,7 +106,7 @@ body.theme-dark {
   --color-primary: #488ECB;
   --color-secondary: #EF4E68;
   */
-  background-image: url('/img/background-24.jpg');
+  background-image: url('/img/background-25.jpg');
   background-attachment: fixed;
   background-position-x: center;
   background-position-y: top;

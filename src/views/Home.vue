@@ -1,10 +1,10 @@
 <template>
   <div class="home">
     <div class="links">
-      <HomeLink id="position-calculator" label="Position Calculator" description="See how good your players could be at any position!"/>
-      <HomeLink id="batter-projections" label="Batter Projections" description="Project full-season stats from batter ratings!"/>
-      <HomeLink id="pitcher-projections" label="Pitcher Projections" description="Project full-season stats from pitcher ratings!"/>
-      <HomeLink id="about" label="About" description="Learn more about the OOTP Calculator!"/>
+      <HomeLink id="position-calculator" label="Position Calculator" description="See how good your players could be at any position!" img-src="/img/banner-position-calculator.svg"/>
+      <HomeLink id="batter-projections" label="Batter Projections" description="Project full-season stats from batter ratings!" img-src="/img/banner-pitcher-projections.svg"/>
+      <HomeLink id="pitcher-projections" label="Pitcher Projections" description="Project full-season stats from pitcher ratings!" img-src="/img/banner-batter-projections.svg"/>
+      <HomeLink id="about" label="About" description="Learn more about the OOTP Calculator!" img-src="/img/banner-about.svg"/>
     </div>
   </div>
 </template>

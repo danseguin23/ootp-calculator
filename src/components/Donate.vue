@@ -1,12 +1,13 @@
 <template>
   <div id="donate">
-    <h1>Hey you!</h1>
-    <p>The OOTP Calculator domain is up for its yearly renewal, so I am once again asking for your financial support.</p>
-    <p>To date, I've been funding the site mostly from my own pocket, so I'm hoping you could spare a few bucks. Every little bit is greatly appreciated!</p>
-    <p>Cheers,<br>Dan</p>
-    <a @click="closeDonate(true)" class="button-donate" href="https://www.paypal.com/donate/?business=VF3BSSQ62ULEU&no_recurring=0&item_name=Your+donation+helps+me+keep+the+OOTP+Calculator+up+and+running.+Thanks%21&currency_code=USD" target="_blank">Donate</a>
+    <h1>We are so back!</h1>
+    <p>OOTP Calculator is back for OOTP 25! In addition to updating the site's visual appeal, I've also updated projection formulas.</p>
+    <p>The OOTP Calculator is completely community funded! If you'd like to contribute, please consider donating below.</p>
+    <p>Hope you enjoy the calculator! <br>- Dan</p>
+    <br>
+    <a @click="closeDonate(true)" class="button-donate" href="https://www.paypal.com/donate/?business=VF3BSSQ62ULEU&no_recurring=0&item_name=Your+donation+helps+me+keep+the+OOTP+Calculator+up+and+running.+Thanks%21&currency_code=USD" target="_blank">Support This Site!</a>
     <div class="sorry-container">
-      <button @click="closeDonate(false)" class="sorry">Sorry, I'm broke too</button>
+      <button @click="closeDonate(false)" class="sorry">Nah, just take me to the calculator</button>
     </div>
   </div>
 </template>
@@ -42,11 +43,12 @@ export default {
 }
 
 #donate p {
-  max-width: 456px;
+  max-width: 400px;
   margin: auto;
   margin-bottom: 16px;
 }
 
+/*
 .button-donate {
   margin: auto;
   padding: 10px 30px;
@@ -67,6 +69,26 @@ export default {
   display: inline-block;
   width: min(456px, 90vw);
 }
+*/
+
+.button-donate {
+  margin: auto;
+  padding: 7px 32px 8px 32px;
+  margin-bottom: 0;
+  margin-top: 120px !important;
+  background: #FFD301;
+  font-size: 1rem;
+  font-family: PayPalSansSmall-Regular,Helvetica Neue,Arial,sans-serif;
+  font-weight: 700;
+  -webkit-font-smoothing: antialiased;
+  color: #000;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 25px;
+  border: none;
+  box-sizing: border-box;
+}
 
 .button-donate:hover {
   background: #E6BF00;
@@ -86,7 +108,7 @@ export default {
   margin-top: 10px;
   background: none;
   border: 0;
-  font-size: 1rem;
+  font-size: .875rem;
 }
 
 .sorry:hover {

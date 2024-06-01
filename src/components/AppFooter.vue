@@ -13,7 +13,7 @@
     </div>
   </div>
   <div id="copy">
-    &copy; 2023 Daniel C. Seguin
+    &copy; 2024 Daniel C. Seguin
   </div>
 </template>
 
