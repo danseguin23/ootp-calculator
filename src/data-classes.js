@@ -23,9 +23,9 @@ const formula_batting = {
 
 // Formulas for pitching ratings
 const formula_pitching = {
-  so: { slope: [0.6, 0.6], intercept: [65, 64] },  // Stuff -> SO / AB * 550
+  so: { slope: [0.6, 0.9], intercept: [65, 40] },  // Stuff -> SO / AB * 550
   hr: { slope: [-0.24, -0.24], intercept: [46, 46] },  // Movement -> HR / AB * 550
-  bb: { slope: [-0.42, -0.42], intercept: [100, 100] },  // Control -> BB / AB * 550
+  bb: { slope: [-0.72, -0.36], intercept: [128, 92] },  // Control -> BB / AB * 550
   gssp: { slope: [0.01, 0], intercept: [0, 1]},  // Stamina -> GS / (G + GS)
   gsrp: { slope: [0, 0.005], intercept: [0, -0.5]},  // Stamina -> GS / (G + GS)
   absp: { slope: [0.12, 0.06], intercept: [8, 14] },  // Stamina -> AB / G
