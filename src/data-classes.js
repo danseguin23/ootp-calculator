@@ -107,7 +107,7 @@ export class Batter {
   sb;
   cs;
 
-  constructor(parks, scale, player, team, potential) {
+  constructor(teams, scale, player, team, potential) {
     // Construct from tab-separated line
     if (player && team) {
       let index = {
@@ -183,10 +183,10 @@ export class Batter {
     else if (!scale) {
       return;
     }
-    this.calculateStats(parks);
+    this.calculateStats(teams);
   }
 
-  calculateStats(parks) {
+  calculateStats(teams) {
     // For ops and war and shit
     const lg_obp = 0.312;
     const lg_slg = 0.409;
@@ -195,8 +195,9 @@ export class Batter {
     const run_cs = -0.5;
     const run_ob = -0.003;
     const war_pa = 0.0032;
+    console.log('Calculating');
     // Park factors
-    let park = parks.find(p => p.abbr == this.team);
+    let park = teams.find(p => p.abbr == this.team);
     let parkAvg;
     let parkHr;
     if (this.bats == 'R') {
@@ -270,6 +271,7 @@ export class Batter {
     this.opsp = opsp;
     this.babip = babip;
     this.war = war / 550 * this.ab;
+    console.log(this.war);
   }
 
   revertRatings(scale) {
@@ -324,7 +326,7 @@ export class Pitcher {
   fip;
   war;
 
-  constructor(parks, scale, player, team, potential) {
+  constructor(teams, scale, player, team, potential) {
     // Construct from tab-separated line
     if (player && team) {
       let index = {
@@ -392,10 +394,10 @@ export class Pitcher {
     else if (!scale) {
       return;
     }
-    this.calculateStats(parks);
+    this.calculateStats(teams);
   }
 
-  calculateStats(parks) {
+  calculateStats(teams) {
     // Constants, subject to change ig
     const er_pct = 0.93;  // Earned runs per run
     const rs_factor = 1.3;  // Multiply by AVG for RS% (maybe use wOBA or OBP?)
@@ -404,7 +406,7 @@ export class Pitcher {
     const c_fip = 3.38;
     const war_ip = 0.01;  // Multiply by innings for replacement
     // Park
-    let park = parks.find(p => p.abbr == this.team);
+    let park = teams.find(p => p.abbr == this.team);
     // Indexes (1 for ratings > 100, 0 for ratings <= 100)
     let soIndex = +(this.stuff > 100);
     let hrIndex = +(this.movement > 100);

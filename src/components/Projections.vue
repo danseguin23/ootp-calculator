@@ -62,6 +62,7 @@ import ProjectionTable from '@/components/Projections/ProjectionTable.vue';
 import MoreOptions from '@/components/MoreOptions.vue';
 import Welcome from '@/components/Welcome.vue';
 import { getTeams } from '../data-manager';
+import { Batter, Pitcher } from '../data-classes';
 
 export default {
   name: 'Projections',
@@ -111,15 +112,11 @@ export default {
     }
   },
   created() {
-    this.team = localStorage.getItem('team') || '-';
-    let players = localStorage.getItem(this.type);
-    if (players && players != 'undefined') {
-      this.players = JSON.parse(players);
-    }
-    this.populateLists();
-    this.loaded = true;
     getTeams().then(teams => {
       this.teams = teams;
+      this.loadPlayers();
+      this.populateLists();
+      this.loaded = true;
     });
   },
   mounted() {
@@ -181,6 +178,27 @@ export default {
         return JSON.parse(item);
       } else {
         return []
+      }
+    },
+
+    loadPlayers() {
+      this.team = localStorage.getItem('team') || '-';
+      let players = localStorage.getItem(this.type);
+      if (!players || players == undefined) {
+        this.players = [];
+        return;
+      }
+      let objPlayers = JSON.parse(players);
+      let model;
+      if (this.type == 'batting') {
+        model = Batter;
+      } else {
+        model = Pitcher;
+      }
+      for (let player of objPlayers) {
+        let classPlayer = Object.assign(new model(), player);
+        classPlayer.calculateStats(this.teams);
+        this.players.push(classPlayer);
       }
     },
 
