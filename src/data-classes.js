@@ -12,7 +12,7 @@ const intercepts = [1.1, -1.75, -1.5, -1.05, -1.8, -1.3, -1.15, -1.25];
 const formula_batting = {
   avg: { slope: [0.0009, 0.0009], intercept: [0.145, 0.145] },  // Contact -> AVG
   gap: { slope: [0.18, 0.18], intercept: [11, 11] },  // Gap ->  (2B + 3B) / AB * 550
-  hr: { slope: [0.3, 0.3], intercept: [-12, -12] },  // Power -> HR / AB * 550
+  hr: { slope: [0.15, 0.3], intercept: [3, -12] },  // Power -> HR / AB * 550
   bb: { slope: [0.6, 0.6], intercept: [-10, -10] },  // Discipline -> BB / AB * 550
   so: { slope: [-1.2, -1.2], intercept: [270, 270] },  // Avoid K's -> SO / AB * 550
   h3: { slope: [0.0006, 0.0009], intercept: [0.02, -0.01] },  // Speed -> 3B / (2B + 3B)
