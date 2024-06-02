@@ -421,7 +421,7 @@ export class Pitcher {
       ab = (this.stamina * formula_pitching.abrp.slope[abIndex] + formula_pitching.abrp.intercept[abIndex]);
       gs = (this.stamina * formula_pitching.gsrp.slope[abIndex] + formula_pitching.gsrp.intercept[abIndex]);
     }
-    let gp = 64 * (1 - gs / (1 + gs));
+    let gp = 60 * (1 - gs / (1 + gs));
     ab = ab * gp;
     // Middle men / helpers / whatever
     let so = Math.max((this.stuff * formula_pitching.so.slope[soIndex] + formula_pitching.so.intercept[soIndex]), 0);
@@ -445,7 +445,7 @@ export class Pitcher {
     let fip = (13 * hr + 3 * bb - 2 * so) / ip + c_fip;
     // Stats
     this.gp = gp;
-    this.gs = 64 - this.gp;
+    this.gs = 60 - this.gp;
     this.ip = ip / 550 * ab;
     this.h = h / 550 * ab;
     this.hr = hr / 550 * ab;

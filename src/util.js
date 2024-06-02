@@ -67,6 +67,7 @@ export const fields = {
 
 // Convert to 1-250 scale
 export function convertRating(scale, rating, nullable=false, stuff=false) {
+  console.log(rating);
   if (!Number(rating) && rating != '- ') {
     if (nullable) return rating;
     throw 'Invalid input! Try the "help" button for tips.';
@@ -78,7 +79,7 @@ export function convertRating(scale, rating, nullable=false, stuff=false) {
   let min = parseInt(split[0]);
   let max = parseInt(split[1]);
   if (rating == '- ') {
-    rating = min;
+    return 100;
   }
   let converted = (rating - min) * 200 / (max - min);
   if (converted < 0 || (converted > 250 && !stuff) || converted > 350) {

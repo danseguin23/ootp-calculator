@@ -125,7 +125,7 @@ const fields_pitching = [
   { title: 'Stamina', key: 'stamina' },
   { title: 'Hold', key: 'hold' }
 ]
-const positions_batting = ['-', 'C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF'];
+const positions_batting = ['-', 'C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'DH'];
 const positions_pitching = ['-', 'SP', 'RP', 'CL'];
 
 export default {
