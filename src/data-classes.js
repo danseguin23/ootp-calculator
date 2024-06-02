@@ -195,7 +195,6 @@ export class Batter {
     const run_cs = -0.5;
     const run_ob = -0.003;
     const war_pa = 0.0032;
-    console.log('Calculating');
     // Park factors
     let park = teams.find(p => p.abbr == this.team);
     let parkAvg;
@@ -271,7 +270,6 @@ export class Batter {
     this.opsp = opsp;
     this.babip = babip;
     this.war = war / 550 * this.ab;
-    console.log(this.war);
   }
 
   revertRatings(scale) {

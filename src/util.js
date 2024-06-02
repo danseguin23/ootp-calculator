@@ -67,7 +67,6 @@ export const fields = {
 
 // Convert to 1-250 scale
 export function convertRating(scale, rating, nullable=false, stuff=false) {
-  console.log(rating);
   if (!Number(rating) && rating != '- ') {
     if (nullable) return rating;
     throw 'Invalid input! Try the "help" button for tips.';
