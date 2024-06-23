@@ -2,7 +2,7 @@ import { convertRating, revertRating } from './util';
 
 const fields_batting = ['contact', 'gap', 'power', 'eye', 'avoidKs', 'speed', 'stealing', 'defense'];
 const fields_pitching = ['stuff', 'movement', 'control', 'stamina', 'hold'];
-const fields_fielding = ["catcherAbil", "catcherArm", "infieldRng", "infieldErr", "infieldArm", "turnDP", "outfieldRng", "outfieldErr", "outfieldArm"];
+const fields_fielding = ["catcherBlocking", "catcherFraming", "catcherArm", "infieldRng", "infieldErr", "infieldArm", "turnDP", "outfieldRng", "outfieldErr", "outfieldArm"];
 
 // For defensive WAR, should probably be re-considered
 const slopes = [0.003, 0.009, 0.018, 0.015, 0.024, 0.009, 0.015, 0.009];
@@ -485,7 +485,8 @@ export class Fielder {
   name;
   height;
   // 1-250 ratings
-  catcherAbil;
+  catcherBlocking;
+  catcherFraming;
   catcherArm;
   infieldRng;
   infieldErr;
@@ -504,7 +505,7 @@ export class Fielder {
     if (save && !player.name) {
       throw 'Invalid input! Name cannot be left blank.'
     }
-    let catcher = player.catcherAbil && player.catcherArm;
+    let catcher = player.catcherBlocking && player.catcherFraming && player.catcherArm;
     let infield = player.infieldRng && player.infieldErr && player.infieldArm && player.turnDP;
     let outfield = player.outfieldRng && player.outfieldErr && player.outfieldArm;
     if (!catcher && !infield && !outfield) {
@@ -520,7 +521,8 @@ export class Fielder {
     }
     */
     this.height = player.height;
-    this.catcherAbil = convertRating(scale, player.catcherAbil, true);
+    this.catcherBlocking = convertRating(scale, player.catcherBlocking, true);
+    this.catcherFraming = convertRating(scale, player.catcherFraming, true);
     this.catcherArm = convertRating(scale, player.catcherArm, true);
     this.infieldRng = convertRating(scale, player.infieldRng, true);
     this.infieldErr = convertRating(scale, player.infieldErr, true);
@@ -532,7 +534,7 @@ export class Fielder {
     this.ratings = [];
     // Calculate ratings
     if (catcher) {
-      let c = (this.catcherAbil - 125) / 25 * 19.5 + (this.catcherArm - 125) / 25 * 19.5 + 133;
+      let c = (this.catcherBlocking - 125) / 25 * 12.125 + (this.catcherFraming - 125) / 25 * 12.125 + (this.catcherArm - 125) / 25 * 10.375 + 118;
       this.ratings.push(c);
     } else {
       this.ratings.push(0);

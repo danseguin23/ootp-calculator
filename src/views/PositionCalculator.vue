@@ -44,10 +44,18 @@
         </tr>
         <tr><th class="empty"></th></tr>
         <tr>
-          <th>Catcher Abil</th>
+          <th>Catcher Blocking</th>
           <td>
             <div class="cell-double">
-              <div><input type="number" v-model="player.catcherAbil"></div>
+              <div><input type="number" v-model="player.catcherBlocking"></div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th>Catcher Framing</th>
+          <td>
+            <div class="cell-double">
+              <div><input type="number" v-model="player.catcherFraming"></div>
             </div>
           </td>
         </tr>
