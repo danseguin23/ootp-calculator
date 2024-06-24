@@ -33,7 +33,7 @@ export default {
     let today = new Date();
     let expire = new Date('2024-06-31');
     let donate = localStorage.getItem('fresh-25') === 'true';
-    let welcome = true;
+    let welcome = false;
     if (welcome && !donate && today < expire) {
       this.welcome = true;
     } else {
