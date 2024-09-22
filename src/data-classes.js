@@ -5,8 +5,8 @@ const fields_pitching = ['stuff', 'movement', 'control', 'stamina', 'hold'];
 const fields_fielding = ["catcherBlocking", "catcherFraming", "catcherArm", "infieldRng", "infieldErr", "infieldArm", "turnDP", "outfieldRng", "outfieldErr", "outfieldArm"];
 
 // For defensive WAR, should probably be re-considered
-const slopes = [0.003, 0.009, 0.018, 0.015, 0.024, 0.009, 0.015, 0.009];
-const intercepts = [1.1, -1.75, -1.5, -1.05, -1.8, -1.3, -1.15, -1.25];
+const slopes = [0.0225, 0.01125, 0.03, 0.01125, 0.045, 0.015, 0.03, 0.015];
+const intercepts = [-1.125, -2.0625, -3, -0.9375, -3.75, -2.5, -3, -2];
 
 // Formulas for batting ratings
 const formula_batting = {
