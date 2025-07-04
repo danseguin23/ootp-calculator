@@ -96,11 +96,11 @@ body.theme-dark {
   --color-text-secondary: #fff;
   --color-highlight: #d7d7d7;
   --color-opaque: #949494;
+  --color-transparent: rgba(255, 255, 255, 0.12);
   /*
   --color-background: var(--color-dark);
   --color-primary-text: #347AB7;
   --color-secondary-text: #E91639;
-  --color-transparent: rgba(255, 255, 255, 0.064);
   --color-red: #EC3251;
   */
   /*
