@@ -57,16 +57,16 @@ body {
   position: relative;
   --font-sans: 'Barlow Condensed', 'Tahoma', sans-serif;
   --font-mono: 'Source Code Pro', monospace;
-  --color-primary: #06206f;
-  --color-secondary: #E88702;
-  --color-primary-lighter: #092991;
-  --color-primary-darker: #031447;
-  --color-secondary-lighter: #FFF398;
-  --color-secondary-darker: #CB6D00;
+  --color-primary: #1d6a7b;
+  --color-secondary: #b62e3a;
+  --color-primary-lighter: #1d8b92;
+  --color-primary-darker: #1d556c;
+  --color-secondary-lighter: #f1414f;
+  --color-secondary-darker: #9c0720;
   --color-contrast: #c41230;
   --color-gray: #ccc;
-  --color-dark: #181828;
-  --color-translucent: rgba(24, 24, 40, 0.8);
+  --color-dark: #010609;
+  --color-translucent: rgba(12, 12, 20, 0.8);
   --color-translucent-dark: rgba(12, 12, 20, 0.8);
 
   --gradient-primary: linear-gradient(var(--color-primary-lighter), var(--color-primary));
@@ -92,26 +92,29 @@ body.theme-light {
 */
 
 body.theme-dark {
-  --color-background: var(--color-dark);
   --color-text: #fff;
+  --color-text-secondary: #fff;
+  --color-highlight: #d7d7d7;
+  --color-opaque: #949494;
+  /*
+  --color-background: var(--color-dark);
   --color-primary-text: #347AB7;
   --color-secondary-text: #E91639;
   --color-transparent: rgba(255, 255, 255, 0.064);
-  --color-opaque: #949494;
-  --color-highlight: #d7d7d7;
   --color-red: #EC3251;
+  */
   /*
   --color-primary: #488ECB;
   --color-secondary: #EF4E68;
   */
-  background-image: url('/img/background-25.jpg');
+  background-image: url('/img/background-26.png');
   background-attachment: fixed;
   background-position-x: center;
   background-position-y: top;
 }
 
 body {
-  background-color: #12230b;
+  background-color: #01080a;
   color: var(--color-text);
 }
 
@@ -181,7 +184,7 @@ option {
 /* Buttons */
 
 .button-submit, .button-help, .button-clear {
-  font-weight: 700;
+  font-weight: 600;
   border: none;
   padding: 2px 10px;
   margin: 8px 4px !important;
@@ -212,7 +215,7 @@ option {
 }
 
 .button-submit {
-  color: black;
+  color: var(--color-text-secondary);
   background-image: var(--gradient-secondary);
 }
 

@@ -491,7 +491,7 @@ export default {
 .button-option {
   padding: 4px 12px;
   border: none;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
   border-radius: 1px;
 }
@@ -539,7 +539,7 @@ select {
 }
 
 #options .column label {
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
 }
 

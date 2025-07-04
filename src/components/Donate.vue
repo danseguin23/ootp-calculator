@@ -56,7 +56,7 @@ export default {
   background: #FFD301;
   font-size: 18px;
   font-family: PayPalSansSmall-Regular,Helvetica Neue,Arial,sans-serif;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 24px;
   -webkit-font-smoothing: antialiased;
   color: #000;
@@ -79,7 +79,7 @@ export default {
   background: #FFD301;
   font-size: 1rem;
   font-family: PayPalSansSmall-Regular,Helvetica Neue,Arial,sans-serif;
-  font-weight: 700;
+  font-weight: 600;
   -webkit-font-smoothing: antialiased;
   color: #000;
   text-align: center;

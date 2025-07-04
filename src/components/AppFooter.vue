@@ -13,7 +13,7 @@
     </div>
   </div>
   <div id="copy">
-    &copy; 2024 Daniel C. Seguin
+    &copy; 2025 Daniel C. Seguin
   </div>
 </template>
 
@@ -42,7 +42,7 @@ export default {
   background: #FFD301;
   font-size: 0.875rem;
   font-family: PayPalSansSmall-Regular,Helvetica Neue,Arial,sans-serif;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 22px;
   -webkit-font-smoothing: antialiased;
   color: #000;
