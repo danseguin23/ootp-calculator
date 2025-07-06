@@ -57,10 +57,10 @@ body {
   position: relative;
   --font-sans: 'Barlow Condensed', 'Tahoma', sans-serif;
   --font-mono: 'Source Code Pro', monospace;
-  --color-primary: #1d6a7b;
+  --color-primary: #007A8C;
   --color-secondary: #b62e3a;
-  --color-primary-lighter: #1d8b92;
-  --color-primary-darker: #1d556c;
+  --color-primary-lighter: #009eaa;
+  --color-primary-darker: #00556d;
   --color-secondary-lighter: #f1414f;
   --color-secondary-darker: #9c0720;
   --color-contrast: #c41230;
