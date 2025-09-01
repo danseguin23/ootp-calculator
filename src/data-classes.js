@@ -20,7 +20,7 @@ const intermediate_estimators = {
 const formula_batting = {
   babip: { slope: [0.000898, 0.000596], intercept: [0.203, 0.233] },  // xBABIP -> BABIP
   gap: { slope: [0.214, 0.148], intercept: [7.18, 13.7] },  // Gap ->  (2B + 3B) / AB * 550
-  hr: { slope: [0.207, 0.265], intercept: [-2.65, -8.42] },  // Power -> HR / AB * 550
+  hr: { slope: [0.207, 0.24], intercept: [-2.65, -5.95] },  // Power -> HR / AB * 550
   bb: { slope: [0.618, 0.487], intercept: [-8.78, 4.25] },  // Discipline -> BB / AB * 550
   so: { slope: [-1.45, -0.787], intercept: [283, 218] },  // Avoid K's -> SO / AB * 550
   h3: { slope: [0.000844, 0.000567], intercept: [-0.00906, 0.0187] },  // Speed -> 3B / (2B + 3B)
