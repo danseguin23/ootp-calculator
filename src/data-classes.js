@@ -10,7 +10,7 @@ const DWAR_INTERCEPTS = [-1.125, -2.0625, -3, -0.9375, -3.75, -2.5, -3, -2];
 
 // Intermediate estimators for batting and pitching ratings
 const INTERMEDIATE_ESTIMATORS = {
-  babip: [1.4, -0.697, 33.3],  // BABIP = c0 * Contact + c1 * Avoid K's + c2
+  babip: [1.4, -0.697, 29.7],  // BABIP = c0 * Contact + c1 * Avoid K's + c2
   aggressiveness: [0.4934, 0.541, -41.3],  // Stealing Aggressiveness = c0 * Speed + c1 * Stealing + c2
   pbabip: [0.379, 5.1, 57.7],  // PBABIP = c0 * Movement + c1 * Ground/Fly + c2
   hra: [1.07, -3.08, -0.0999],  // HRA = c0 * Movement + c1 * Ground/Fly + c2
@@ -114,9 +114,31 @@ const LOOKUP_POS = {
   'RF':	-6
 }
 
-// For ops and war and stuff
-const lg_obp = 0.311;
-const lg_slg = 0.402;
+const LEAGUE_TOTALS = {
+  atBats: 163687,
+  hits: 39823,
+  doubles: 7771,
+  triples: 697,
+  homeRuns: 5453,
+  walks: 14929,
+  hitByPitches: 2020,
+  strikeouts: 41197
+}
+
+const LEAGUE_AVERAGES = {
+  babip: (LEAGUE_TOTALS.hits - LEAGUE_TOTALS.homeRuns) / (LEAGUE_TOTALS.atBats - LEAGUE_TOTALS.homeRuns - LEAGUE_TOTALS.strikeouts),
+  so: LEAGUE_TOTALS.strikeouts / LEAGUE_TOTALS.atBats * 550,
+  gap: (LEAGUE_TOTALS.doubles + LEAGUE_TOTALS.triples) / (LEAGUE_TOTALS.hits - LEAGUE_TOTALS.homeRuns),
+  hr: LEAGUE_TOTALS.homeRuns / LEAGUE_TOTALS.atBats * 550,
+  bb: LEAGUE_TOTALS.walks / LEAGUE_TOTALS.atBats * 550,
+  // For OPS+
+  obp: (LEAGUE_TOTALS.hits + LEAGUE_TOTALS.walks + LEAGUE_TOTALS.hitByPitches) / (LEAGUE_TOTALS.atBats + LEAGUE_TOTALS.walks + LEAGUE_TOTALS.hitByPitches),
+  slg: (LEAGUE_TOTALS.hits + LEAGUE_TOTALS.doubles + 2 * LEAGUE_TOTALS.triples + 3 * LEAGUE_TOTALS.homeRuns) / LEAGUE_TOTALS.atBats
+}
+
+console.log(LEAGUE_AVERAGES);
+
+// For WAR calculations
 const run_pa = 0.118;  
 const run_sb = 0.2;
 const run_cs = -0.425;
@@ -280,46 +302,44 @@ export class Batter {
     let xbabip = (this.contact * INTERMEDIATE_ESTIMATORS.babip[0] + this.avoidKs * INTERMEDIATE_ESTIMATORS.babip[1] + INTERMEDIATE_ESTIMATORS.babip[2]);
     let xagg = (this.speed * INTERMEDIATE_ESTIMATORS.aggressiveness[0] + this.stealing * INTERMEDIATE_ESTIMATORS.aggressiveness[1] + INTERMEDIATE_ESTIMATORS.aggressiveness[2]);
     // Indexes (1 for ratings > 100, 0 for ratings <= 100)
-    let babipIndex = +(xbabip > 100);
-    let gapIndex = +(this.gap > 100);
-    let hrIndex = +(this.power > 100);
-    let bbIndex = +(this.eye > 100);
-    let soIndex = +(this.avoidKs > 100);
     let h3Index = +(this.speed > 100);
     let sbIndex = +(this.stealing > 100);
     let sbaIndex = +(xagg > 100);
     let zrIndex = +(this.defense > 100);
-    // Unadjusted rates from lookup tables
-    let babipRaw = getLookupValue(LOOKUP_BATTING.babip, convert250to600(xbabip));
-    let soRaw = getLookupValue(LOOKUP_BATTING.so, convert250to600(this.avoidKs));
-    let gapRaw = getLookupValue(LOOKUP_BATTING.gap, convert250to600(this.gap));
-    let hrRaw = getLookupValue(LOOKUP_BATTING.hr, convert250to600(this.power));
-    let bbRaw = getLookupValue(LOOKUP_BATTING.bb, convert250to600(this.eye));
+    // Adjusted rates before park factor adjustment
+    let babipAdj = getAdjustedRate(xbabip, LEAGUE_AVERAGES.babip, LOOKUP_BATTING.babip);
+    let soAdj = getAdjustedRate(this.avoidKs, LEAGUE_AVERAGES.so, LOOKUP_BATTING.so, true);
+    let gapAdj = getAdjustedRate(this.gap, LEAGUE_AVERAGES.gap, LOOKUP_BATTING.gap);
+    let hrAdj = getAdjustedRate(this.power, LEAGUE_AVERAGES.hr, LOOKUP_BATTING.hr, true);
+    let bbAdj = getAdjustedRate(this.eye, LEAGUE_AVERAGES.bb, LOOKUP_BATTING.bb, true);
+    console.log(`BABIP: ${babipAdj}, SO: ${soAdj}, Gap: ${gapAdj}, HR: ${hrAdj}, BB: ${bbAdj}`);
+    // Adjusted rates
     // Middle men / helpers / whatever
     let h3Pct = (this.speed * FORMULA_BATTING.h3.slope[h3Index] + FORMULA_BATTING.h3.intercept[h3Index]);
     let sbaPct = (xagg * FORMULA_BATTING.sba.slope[sbaIndex] + FORMULA_BATTING.sba.intercept[sbaIndex]);
     let sbPct = (this.stealing * FORMULA_BATTING.sb.slope[sbIndex] + FORMULA_BATTING.sb.intercept[sbIndex]);
-    let babip = (xbabip * FORMULA_BATTING.babip.slope[babipIndex] + FORMULA_BATTING.babip.intercept[babipIndex]);
-    let gap = Math.max((this.gap * FORMULA_BATTING.gap.slope[gapIndex] + FORMULA_BATTING.gap.intercept[gapIndex]), 0);
-    let hr = Math.max((this.power * FORMULA_BATTING.hr.slope[hrIndex] + FORMULA_BATTING.hr.intercept[hrIndex]) * parkHr, 0);
-    let bb = Math.max((this.eye * FORMULA_BATTING.bb.slope[bbIndex] + FORMULA_BATTING.bb.intercept[bbIndex]), 0);
-    let so = Math.max((this.avoidKs * FORMULA_BATTING.so.slope[soIndex] + FORMULA_BATTING.so.intercept[soIndex]), 0);
+    let babip = babipAdj;
+    let hr = hrAdj * 550 * parkHr;
+    let bb = bbAdj * 550;
+    let so = soAdj * 550;
     let zr =  (this.defense * FORMULA_BATTING.zr.slope[zrIndex] + FORMULA_BATTING.zr.intercept[zrIndex]);
 
     let h = Math.max((babip * (550 - hr - so) + hr) * parkAvg, 0);
+    let gap = gapAdj * (h - hr);
     let h2 = Math.max(gap * (1 - h3Pct) * park.doubles, 0);
     let h3 = Math.max(gap * h3Pct * park.triples, 0);
     let sba = Math.max(sbaPct * (h - h2 - h3 - hr + bb), 0);
     let sb = Math.max(sba * sbPct, 0);
     let cs = Math.max(sba * (1 - sbPct), 0);
-    let pa = Math.max(550 + bb, 0);
+    let hbp = LEAGUE_TOTALS.hitByPitches / LEAGUE_TOTALS.atBats * 550;
+    let pa = Math.max(550 + bb + hbp, 0);
     // Rates
     let avg = h / 550
-    let obp = (h + bb) / pa;
+    let obp = (h + bb + hbp) / pa;
     let slg = (h + h2 + 2 * h3 + 3 * hr) / 550;
     let iso = slg - avg;
     let ops = obp + slg;
-    let opsp = (obp / lg_obp / park.obp + slg / lg_slg / park.slg - 1) * 100;
+    let opsp = (obp / LEAGUE_AVERAGES.obp / park.obp + slg / LEAGUE_AVERAGES.slg / park.slg - 1) * 100;
     // Value
     let bat = run_pa * (opsp / 100 - 1) * pa;
     let bsr = run_sb * sb + run_cs * cs + run_ob * (h - h2 - h3 - hr + bb);
@@ -748,4 +768,18 @@ function getLookupValue(lookup, rating) {
     }
   }
   return lookup[lookup.length - 1][1];
+}
+
+function getAdjustedRate(rate1to250, leagueAverage, lookup, per550=false) {
+  let rate600 = convert250to600(rate1to250);
+  let raw = getLookupValue(lookup, rate600);
+  let lookup50Grade = getLookupValue(lookup, 400);
+  if (per550) {
+    raw = raw / 550;
+    leagueAverage = leagueAverage / 550;
+    lookup50Grade = lookup50Grade / 550;
+  }
+  console.log(leagueAverage);
+  let adjusted = (raw*leagueAverage*(1-lookup50Grade))/(raw*leagueAverage-lookup50Grade*raw-lookup50Grade*leagueAverage+lookup50Grade)
+  return adjusted;
 }
