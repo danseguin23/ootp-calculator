@@ -12,13 +12,13 @@ const DWAR_INTERCEPTS = [-1.125, -2.0625, -3, -0.9375, -3.75, -2.5, -3, -2];
 const INTERMEDIATE_ESTIMATORS = {
   babip: [1.4, -0.697, 29.7],  // BABIP = c0 * Contact + c1 * Avoid K's + c2
   aggressiveness: [0.4934, 0.541, -41.3],  // Stealing Aggressiveness = c0 * Speed + c1 * Stealing + c2
-  pbabip: [0.379, 5.1, 57.7],  // PBABIP = c0 * Movement + c1 * Ground/Fly + c2
+  pbabip: [0.379, 5.1, 51.9],  // PBABIP = c0 * Movement + c1 * Ground/Fly + c2
   hra: [1.07, -3.08, -0.0999],  // HRA = c0 * Movement + c1 * Ground/Fly + c2
 }
 
 // Formulas for batting ratings
 const FORMULA_BATTING = {
-  // Deprecated in favour of lookup_batting
+  // Deprecated in favour of LOOKUP_BATTING
   babip: { slope: [0.000898, 0.000596], intercept: [0.203, 0.233] },  // xBABIP -> BABIP
   gap: { slope: [0.214, 0.148], intercept: [7.18, 13.7] },  // Gap ->  (2B + 3B) / AB * 550
   hr: { slope: [0.207, 0.24], intercept: [-2.65, -5.95] },  // Power -> HR / AB * 550
@@ -76,12 +76,47 @@ const LOOKUP_BATTING = {
   ]
 }
 
+const LOOKUP_PITCHING = {
+  so: [
+    [0, 5],
+    [150, 35],
+    [300, 85],
+    [400, 110],
+    [500, 155],
+    [600, 245],
+  ],
+  bb: [
+    [0, 175],
+    [150, 100],
+    [300, 70],
+    [400, 45],
+    [500, 25],
+    [600, 5],
+  ],
+  hr: [
+    [0, 50],
+    [150, 35],
+    [300, 25],
+    [400, 15],
+    [500, 7.5],
+    [600, 1],
+  ],
+  babip: [
+    [0, 0.32],
+    [100, 0.3],
+    [150, 0.29],
+    [250, 0.275]
+  ]
+}
+
 // Formulas for pitching ratings
 const FORMULA_PITCHING = {
+  // Deprecated in favour of LOOKUP_PITCHING
   so: { slope: [0.954, 0.678], intercept: [41.9, 69.5] },  // Stuff -> SO / AB * 550
   hr: { slope: [-0.25, -0.102], intercept: [42, 27.3] },  // xHRA -> HR / AB * 550
   babip: { slope: [-0.000168, -0.000168], intercept: [0.3, 0.3] },  // xPBABIP -> (H - HR) / (AB - HR - SO)
   bb: { slope: [-0.77, -0.25], intercept: [124, 72.3] },  // Control -> BB / AB * 550
+  // Still in use, but using 1-250 ratings
   gssp: { slope: [0.01, 0], intercept: [0, 1]},  // Stamina -> GS / (G + GS)
   gsrp: { slope: [0, 0.005], intercept: [0, -0.5]},  // Stamina -> GS / (G + GS)
   absp: { slope: [0.0275, 0.0216], intercept: [7.32, 7.91] },  // Stamina -> AB / (G + GS)
@@ -136,8 +171,6 @@ const LEAGUE_AVERAGES = {
   slg: (LEAGUE_TOTALS.hits + LEAGUE_TOTALS.doubles + 2 * LEAGUE_TOTALS.triples + 3 * LEAGUE_TOTALS.homeRuns) / LEAGUE_TOTALS.atBats
 }
 
-console.log(LEAGUE_AVERAGES);
-
 // For WAR calculations
 const run_pa = 0.118;  
 const run_sb = 0.2;
@@ -146,11 +179,12 @@ const run_ob = -0.0072;
 const war_pa = 0.00375;
 // Pitchers
 const er_pct = 0.92;  // Earned runs per run
-const rs_factor = 1.31;  // Multiply by AVG for RS% (maybe use wOBA or OBP?)
+const rs_factor = 1.235;  // Multiply by AVG for RS% (maybe use wOBA or OBP?)
+const add_outs = 10;  // Add to outs for innings calculation
 const lg_era = 4.08;
 const lg_ra9 = 4.44;
 const c_fip = 3.16;
-const war_ip = -0.00017;  // Add to WAR (multiplied by innings)
+const war_ip = 0.0025;  // Add to WAR (multiplied by innings)
 
 export class Batter {
   list;
@@ -496,11 +530,14 @@ export class Pitcher {
     // Estimated grades
     let xbabip = (this.movement * INTERMEDIATE_ESTIMATORS.pbabip[0] + LOOKUP_GROUND_FLY[this.groundFly] * INTERMEDIATE_ESTIMATORS.pbabip[1] + INTERMEDIATE_ESTIMATORS.pbabip[2]);
     let xhra = (this.movement * INTERMEDIATE_ESTIMATORS.hra[0] + LOOKUP_GROUND_FLY[this.groundFly] * INTERMEDIATE_ESTIMATORS.hra[1] + INTERMEDIATE_ESTIMATORS.hra[2]);
+    // Adjusted rates before park factor adjustment
+    let babipAdj = getAdjustedRate(xbabip, LEAGUE_AVERAGES.babip, LOOKUP_PITCHING.babip, false, true);
+    console.log(`xBABIP: ${xbabip} -> BABIP: ${babipAdj}`);
+    let hrAdj = getAdjustedRate(xhra, LEAGUE_AVERAGES.hr, LOOKUP_PITCHING.hr, true);
+    let soAdj = getAdjustedRate(this.stuff, LEAGUE_AVERAGES.so, LOOKUP_PITCHING.so, true);
+    let bbAdj = getAdjustedRate(this.control, LEAGUE_AVERAGES.bb, LOOKUP_PITCHING.bb, true);
+    console.log(`PBABIP: ${babipAdj}, HRA: ${hrAdj}, SO: ${soAdj}, BB: ${bbAdj}`);
     // Indexes (1 for ratings > 100, 0 for ratings <= 100)
-    let soIndex = +(this.stuff > 100);
-    let babipIndex = +(xbabip > 100);
-    let hrIndex = +(xhra > 100);
-    let bbIndex = +(this.control > 100);
     let abIndex = +(this.stamina > 100);
     let wsbIndex = +(this.hold > 100);
     // Pitcher-specific
@@ -516,16 +553,17 @@ export class Pitcher {
     let gp = 60 * (1 - gs / (1 + gs));
     ab = ab * 60;
     // Middle men / helpers / whatever
-    let so = Math.max((this.stuff * FORMULA_PITCHING.so.slope[soIndex] + FORMULA_PITCHING.so.intercept[soIndex]), 0);
-    let hr = Math.max((xhra * FORMULA_PITCHING.hr.slope[hrIndex] + FORMULA_PITCHING.hr.intercept[hrIndex]) * park.hr_overall, 0);
-    let bb = Math.max((this.control * FORMULA_PITCHING.bb.slope[bbIndex] + FORMULA_PITCHING.bb.intercept[bbIndex]), 0);
+    let so = soAdj * 550;
+    let hr = hrAdj * 550 * park.hr_overall;
+    let bb = bbAdj * 550;
+    let hbp = LEAGUE_TOTALS.hitByPitches / LEAGUE_TOTALS.atBats * 550;
+    let babip = babipAdj;
     let wsb = (this.hold * FORMULA_PITCHING.wsb.slope[wsbIndex] + FORMULA_PITCHING.wsb.intercept[wsbIndex]);
-    let babip = (xbabip * FORMULA_PITCHING.babip.slope[babipIndex] + FORMULA_PITCHING.babip.intercept[babipIndex]);
     let h = Math.max(babip * (550 - hr - so) + hr, 0);
     let avg = h / 550;
-    let ip = Math.max((550 - h) / 3, 0);
+    let ip = Math.max((550 - h + add_outs) / 3, 0);
     let rs = Math.max(avg * rs_factor, 0);
-    let r = Math.max(rs * (h - hr + bb) + hr + wsb, 0);
+    let r = Math.max(rs * (h - hr + bb + hbp) + hr + wsb, 0);
     let er = Math.max(er_pct * r, 0);
     let era = er / ip * 9;
     let whip = (bb + h) / ip;
@@ -534,7 +572,7 @@ export class Pitcher {
     let k9 = so / ip * 9;
     let kbb = so / bb;
     let erap = lg_era / (era / park.era) * 100;
-    let fip = (13 * hr + 3 * bb - 2 * so) / ip + c_fip;
+    let fip = (13 * hr + 3 * (bb + hbp) - 2 * so) / ip + c_fip;
     // Stats
     this.gp = gp;
     this.gs = 60 - this.gp;
@@ -770,16 +808,22 @@ function getLookupValue(lookup, rating) {
   return lookup[lookup.length - 1][1];
 }
 
-function getAdjustedRate(rate1to250, leagueAverage, lookup, per550=false) {
-  let rate600 = convert250to600(rate1to250);
-  let raw = getLookupValue(lookup, rate600);
-  let lookup50Grade = getLookupValue(lookup, 400);
+function getAdjustedRate(rate1to250, leagueAverage, lookup, per550=false, keepAs1to250=false) {
+  let rate;
+  let lookup50Grade;
+  if (keepAs1to250) {
+    rate = rate1to250;
+    lookup50Grade = getLookupValue(lookup, 100);
+  } else {
+    rate = convert250to600(rate1to250);
+    lookup50Grade = getLookupValue(lookup, 400);
+  }
+  let raw = getLookupValue(lookup, rate);
   if (per550) {
     raw = raw / 550;
     leagueAverage = leagueAverage / 550;
     lookup50Grade = lookup50Grade / 550;
   }
-  console.log(leagueAverage);
   let adjusted = (raw*leagueAverage*(1-lookup50Grade))/(raw*leagueAverage-lookup50Grade*raw-lookup50Grade*leagueAverage+lookup50Grade)
   return adjusted;
 }
