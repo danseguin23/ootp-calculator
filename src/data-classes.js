@@ -178,11 +178,10 @@ const run_cs = -0.425;
 const run_ob = -0.0072;
 const war_pa = 0.00375;
 // Pitchers
-const er_pct = 0.92;  // Earned runs per run
 const rs_factor = 1.235;  // Multiply by AVG for RS% (maybe use wOBA or OBP?)
 const add_outs = 10;  // Add to outs for innings calculation
 const lg_era = 4.08;
-const lg_ra9 = 4.44;
+const lg_ra9 = 4.45;
 const c_fip = 3.16;
 const war_ip = 0.0025;  // Add to WAR (multiplied by innings)
 
@@ -333,8 +332,8 @@ export class Batter {
       parkHr = park.hr_overall;
     }
     // Estimated grades
-    let xbabip = (this.contact * INTERMEDIATE_ESTIMATORS.babip[0] + this.avoidKs * INTERMEDIATE_ESTIMATORS.babip[1] + INTERMEDIATE_ESTIMATORS.babip[2]);
-    let xagg = (this.speed * INTERMEDIATE_ESTIMATORS.aggressiveness[0] + this.stealing * INTERMEDIATE_ESTIMATORS.aggressiveness[1] + INTERMEDIATE_ESTIMATORS.aggressiveness[2]);
+    let xbabip = Math.max((this.contact * INTERMEDIATE_ESTIMATORS.babip[0] + this.avoidKs * INTERMEDIATE_ESTIMATORS.babip[1] + INTERMEDIATE_ESTIMATORS.babip[2]), 0);
+    let xagg = Math.max((this.speed * INTERMEDIATE_ESTIMATORS.aggressiveness[0] + this.stealing * INTERMEDIATE_ESTIMATORS.aggressiveness[1] + INTERMEDIATE_ESTIMATORS.aggressiveness[2]), 0);
     // Indexes (1 for ratings > 100, 0 for ratings <= 100)
     let h3Index = +(this.speed > 100);
     let sbIndex = +(this.stealing > 100);
@@ -358,15 +357,15 @@ export class Batter {
     let so = soAdj * 550;
     let zr =  (this.defense * FORMULA_BATTING.zr.slope[zrIndex] + FORMULA_BATTING.zr.intercept[zrIndex]);
 
-    let h = Math.max((babip * (550 - hr - so) + hr) * parkAvg, 0);
+    let h = (babip * (550 - hr - so) + hr) * parkAvg;
     let gap = gapAdj * (h - hr);
-    let h2 = Math.max(gap * (1 - h3Pct) * park.doubles, 0);
-    let h3 = Math.max(gap * h3Pct * park.triples, 0);
-    let sba = Math.max(sbaPct * (h - h2 - h3 - hr + bb), 0);
-    let sb = Math.max(sba * sbPct, 0);
-    let cs = Math.max(sba * (1 - sbPct), 0);
+    let h2 = gap * (1 - h3Pct) * park.doubles;
+    let h3 = gap * h3Pct * park.triples;
+    let sba = sbaPct * (h - h2 - h3 - hr + bb);
+    let sb = sba * sbPct;
+    let cs = sba * (1 - sbPct);
     let hbp = LEAGUE_TOTALS.hitByPitches / LEAGUE_TOTALS.atBats * 550;
-    let pa = Math.max(550 + bb + hbp, 0);
+    let pa = 550 + bb + hbp;
     // Rates
     let avg = h / 550
     let obp = (h + bb + hbp) / pa;
@@ -528,8 +527,10 @@ export class Pitcher {
     // Park
     let park = teams.find(p => p.abbr == this.team);
     // Estimated grades
-    let xbabip = (this.movement * INTERMEDIATE_ESTIMATORS.pbabip[0] + LOOKUP_GROUND_FLY[this.groundFly] * INTERMEDIATE_ESTIMATORS.pbabip[1] + INTERMEDIATE_ESTIMATORS.pbabip[2]);
-    let xhra = (this.movement * INTERMEDIATE_ESTIMATORS.hra[0] + LOOKUP_GROUND_FLY[this.groundFly] * INTERMEDIATE_ESTIMATORS.hra[1] + INTERMEDIATE_ESTIMATORS.hra[2]);
+    let xbabip = Math.max((this.movement * INTERMEDIATE_ESTIMATORS.pbabip[0] + LOOKUP_GROUND_FLY[this.groundFly] * INTERMEDIATE_ESTIMATORS.pbabip[1] + INTERMEDIATE_ESTIMATORS.pbabip[2]), 0);
+    let xhra = Math.max((this.movement * INTERMEDIATE_ESTIMATORS.hra[0] + LOOKUP_GROUND_FLY[this.groundFly] * INTERMEDIATE_ESTIMATORS.hra[1] + INTERMEDIATE_ESTIMATORS.hra[2]), 0);
+    console.log('Movement:', this.movement, 'GF:', LOOKUP_GROUND_FLY[this.groundFly]);
+    console.log(`xBABIP: ${xbabip}, xHRA: ${xhra}`);
     // Adjusted rates before park factor adjustment
     let babipAdj = getAdjustedRate(xbabip, LEAGUE_AVERAGES.babip, LOOKUP_PITCHING.babip, false, true);
     console.log(`xBABIP: ${xbabip} -> BABIP: ${babipAdj}`);
@@ -559,12 +560,12 @@ export class Pitcher {
     let hbp = LEAGUE_TOTALS.hitByPitches / LEAGUE_TOTALS.atBats * 550;
     let babip = babipAdj;
     let wsb = (this.hold * FORMULA_PITCHING.wsb.slope[wsbIndex] + FORMULA_PITCHING.wsb.intercept[wsbIndex]);
-    let h = Math.max(babip * (550 - hr - so) + hr, 0);
+    let h = babip * (550 - hr - so) + hr;
     let avg = h / 550;
-    let ip = Math.max((550 - h + add_outs) / 3, 0);
-    let rs = Math.max(avg * rs_factor, 0);
-    let r = Math.max(rs * (h - hr + bb + hbp) + hr + wsb, 0);
-    let er = Math.max(er_pct * r, 0);
+    let ip = (550 - h + add_outs) / 3;
+    let rs = avg * rs_factor;
+    let r = rs * (h - hr + bb + hbp) + hr + wsb;
+    let er = lg_era / lg_ra9 * r;
     let era = er / ip * 9;
     let whip = (bb + h) / ip;
     let hr9 = hr / ip * 9;
