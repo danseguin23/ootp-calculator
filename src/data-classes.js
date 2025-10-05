@@ -176,14 +176,14 @@ const run_pa = 0.118;
 const run_sb = 0.2;
 const run_cs = -0.425;
 const run_ob = -0.0072;
-const war_pa = 0.00375;
+const war_pa = 0.003135;
 // Pitchers
 const rs_factor = 1.235;  // Multiply by AVG for RS% (maybe use wOBA or OBP?)
 const add_outs = 10;  // Add to outs for innings calculation
 const lg_era = 4.08;
 const lg_ra9 = 4.45;
 const c_fip = 3.16;
-const war_ip = 0.0025;  // Add to WAR (multiplied by innings)
+const war_ip = 0.0048;  // Add to WAR (multiplied by innings)
 
 export class Batter {
   list;
