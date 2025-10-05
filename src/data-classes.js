@@ -349,8 +349,8 @@ export class Batter {
     // Adjusted rates
     // Middle men / helpers / whatever
     let h3Pct = (this.speed * FORMULA_BATTING.h3.slope[h3Index] + FORMULA_BATTING.h3.intercept[h3Index]);
-    let sbaPct = (xagg * FORMULA_BATTING.sba.slope[sbaIndex] + FORMULA_BATTING.sba.intercept[sbaIndex]);
-    let sbPct = (this.stealing * FORMULA_BATTING.sb.slope[sbIndex] + FORMULA_BATTING.sb.intercept[sbIndex]);
+    let sbaPct = Math.max((xagg * FORMULA_BATTING.sba.slope[sbaIndex] + FORMULA_BATTING.sba.intercept[sbaIndex]), 0);
+    let sbPct = Math.max((this.stealing * FORMULA_BATTING.sb.slope[sbIndex] + FORMULA_BATTING.sb.intercept[sbIndex]), 0);
     let babip = babipAdj;
     let hr = hrAdj * 550 * parkHr;
     let bb = bbAdj * 550;
