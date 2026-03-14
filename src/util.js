@@ -66,12 +66,12 @@ export const fields = {
 }
 
 // Convert to 1-250 scale
-export function convertRating(scale, rating, nullable=false, stuff=false) {
+export function convertRating(scale, rating, nullable=false, stuff=false, ignore2080=false) {
   if (!Number(rating) && rating != '- ') {
     if (nullable) return rating;
     throw 'Invalid input! Try the "help" button for tips.';
   }
-  if (scale == '20 to 80' && rating % 5 != 0 && rating != '- ') {
+  if (scale == '20 to 80' && rating % 5 != 0 && rating != '- ' && !ignore2080) {
     throw 'Invalid input! 20-80 ratings must be a multiple of 5.';
   }
   let split = scale.split(' to ');

@@ -1,59 +1,158 @@
 <template>
-<!--<label for="input">{{label}}</label>
+  <!--<label for="input">{{label}}</label>
 <br>-->
-<div class="row-flex"><button class="button-help" type="button" @click="clickHelp()">Help</button></div>
-<div id="help">
-  <p>To import a batch of players, copy and paste tab-separated {{type}} ratings into the box below.</p>
-  <ol>
-    <li>In OOTP, find a list of players you want to import, and make sure you are on the "{{capitalized}} Ratings" view.</li>
-    <li>Select "Report", then "Write report to disk". This will open the table in your browser.</li>
-    <li>Select and copy the contents of the table.</li>
-    <li>Paste in the box below, then submit.</li>
-  </ol>
-  <p><strong>Tip:</strong> if an error occurs, make sure the correct view is selected, and that all columns are copied.</p>
-</div>
-<textarea id="input" type="file" rows="15" v-model="input"></textarea>
+  <div class="row-flex">
+    <button class="button-help" type="button" @click="clickHelp()">Help</button>
+  </div>
+  <div id="help">
+    <p>
+      To import a batch of players, copy and paste tab-separated
+      {{ type }} ratings into the box below.
+    </p>
+    <ol>
+      <li>
+        In OOTP, find a list of players you want to import, and make sure you
+        are on the "{{ capitalized }} Ratings" view.
+      </li>
+      <li>
+        Select "Report", then "Write report to disk". This will open the table
+        in your browser.
+      </li>
+      <li>Select and copy the contents of the table.</li>
+      <li>Paste in the box below, then submit.</li>
+    </ol>
+    <p>
+      <strong>Tip:</strong> if an error occurs, make sure the correct view is
+      selected, and that the header and all columns are copied.
+    </p>
+  </div>
+  <textarea id="input" type="file" rows="15" v-model="input"></textarea>
 </template>
 
 <script>
 import { Batter, Pitcher } from '../../data-classes';
 
-const headers_batting = ['POS', '#', 'Name', 'Inf', 'Age', 'B', 'T', 'OVR', 'CON', 'GAP', 'POW', 'EYE', 'K\'s', 'CON vL', 'POW vL', 'CON vR', 'POW vR', 'BUN', 'BFH', 'SPE', 'STE', 'DEF', 'SctAcc'];
-const headers_batting_potential = ['POS', '#', 'Name', 'Inf', 'Age', 'B', 'T', 'POT', 'CON P', 'GAP P', 'POW P', 'EYE P', 'K P', 'SPE', 'STE', 'RUN', 'DEF', 'SctAcc'];
-const headers_pitching = ['POS', '#', 'Name', 'Inf', 'Age', 'B', 'T', 'OVR', 'STU', 'MOV', 'CON', 'STU vL', 'STU vR', 'VELO', 'STM', 'G/F', 'HLD', 'SctAcc'];
-const headers_pitching_potential = ['POS', '#', 'Name', 'Inf', 'Age', 'B', 'T', 'POT', 'STU P', 'MOV P', 'CON P', 'VELO', 'STM', 'G/F', 'HLD', 'SctAcc'];
+const headers_batting = [
+  'POS',
+  '#',
+  'Name',
+  'Inf',
+  'Age',
+  'B',
+  'T',
+  'OVR',
+  'CON',
+  'GAP',
+  'POW',
+  'EYE',
+  "K's",
+  'CON vL',
+  'POW vL',
+  'CON vR',
+  'POW vR',
+  'BUN',
+  'BFH',
+  'SPE',
+  'STE',
+  'DEF',
+  'SctAcc',
+];
+const headers_batting_potential = [
+  'POS',
+  '#',
+  'Name',
+  'Inf',
+  'Age',
+  'B',
+  'T',
+  'POT',
+  'CON P',
+  'GAP P',
+  'POW P',
+  'EYE P',
+  'K P',
+  'SPE',
+  'STE',
+  'RUN',
+  'DEF',
+  'SctAcc',
+];
+const optional_headers_batting = ['BABIP', 'SR'];
+const optional_headers_batting_potential = ['BABIP', 'SR'];
+const headers_pitching = [
+  'POS',
+  '#',
+  'Name',
+  'Inf',
+  'Age',
+  'B',
+  'T',
+  'OVR',
+  'STU',
+  'MOV',
+  'CON',
+  'STU vL',
+  'STU vR',
+  'VELO',
+  'STM',
+  'G/F',
+  'HLD',
+  'SctAcc',
+];
+const headers_pitching_potential = [
+  'POS',
+  '#',
+  'Name',
+  'Inf',
+  'Age',
+  'B',
+  'T',
+  'POT',
+  'STU P',
+  'MOV P',
+  'CON P',
+  'VELO',
+  'STM',
+  'G/F',
+  'HLD',
+  'SctAcc',
+];
+const optional_headers_pitching = ['HRA', 'BABIP'];
+const optional_headers_pitching_potential = ['HRA', 'BABIP'];
 
 export default {
   name: 'InputBatch',
   props: {
     type: {
-      type: String,  // 'batting' or 'pitching'
-      required: true
+      type: String, // 'batting' or 'pitching'
+      required: true,
     },
     scale: {
       type: String,
-      required: true
+      required: true,
     },
     teams: {
       type: Array,
-      required: true
+      required: true,
     },
     list: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
       headers: [],
       headersPotential: [],
+      optionalHeaders: [],
+      optionalHeadersPotential: [],
       players: [],
       input: '',
       showHelp: false,
       error: '',
       team: '-',
-      model: null
-    }
+      model: null,
+    };
   },
   computed: {
     capitalized() {
@@ -61,16 +160,20 @@ export default {
     },
     label() {
       return `Select a team, then paste ${this.type} ratings below to import players.`;
-    }
+    },
   },
   created() {
     if (this.type == 'batting') {
       this.headers = headers_batting;
       this.headersPotential = headers_batting_potential;
+      this.optionalHeaders = optional_headers_batting;
+      this.optionalHeadersPotential = optional_headers_batting_potential;
       this.model = Batter;
     } else if (this.type == 'pitching') {
       this.headers = headers_pitching;
       this.headersPotential = headers_pitching_potential;
+      this.optionalHeaders = optional_headers_pitching;
+      this.optionalHeadersPotential = optional_headers_pitching_potential;
       this.model = Pitcher;
     }
   },
@@ -102,31 +205,15 @@ export default {
       } catch (err) {
         return { error: 'Invalid input! Try the "help" button for tips.' };
       }
-      // See if there's a header included, make sure it's valid
-      let headers = lines.shift().replace(' ▾', '').split('\t');
-      let compare;
-      let potential;
-      if (headers.length == this.headersPotential.length) {
-        compare = this.headersPotential;
-        potential = true;
-      } else {
-        compare = this.headers;
-        potential = false;
+      const headerInfo = this.getHeaderInfo(lines);
+      if (headerInfo.error) {
+        return { error: headerInfo.error };
       }
-      if (lines[0].substr(0, 3) == 'POS') {
-        let same = true;
-        for (let i in headers) {
-          if (headers[i].trim() != compare[i]) {
-            same = false;
-            break;
-          }
-        }
-        if (!same) {
-          return { error: `Invalid input! Make sure to copy from the "${this.capitalized} Ratings" view.` };
-        }
+      if (headerInfo.usedHeader) {
+        lines.shift();
       }
       try {
-        this.mapPlayers(lines, potential);
+        this.mapPlayers(lines, headerInfo);
         return { players: this.players };
       } catch (error) {
         if (error.indexOf('Error') >= 0) {
@@ -140,12 +227,117 @@ export default {
       this.input = '';
     },
 
-    mapPlayers(lines, potential) {
+    mapPlayers(lines, headerInfo) {
       for (let line of lines) {
-        let player = new this.model(this.teams, this.scale, line, this.team, potential);
+        let normalizedLine = line;
+        if (headerInfo.headerMap) {
+          const orderedValues = this.normalizeColumns(
+            line,
+            headerInfo.headerMap,
+            headerInfo.compare,
+            headerInfo.optionalHeaders,
+          );
+          normalizedLine = orderedValues.join('\t');
+        }
+        let player = new this.model(
+          this.teams,
+          this.scale,
+          normalizedLine,
+          this.team,
+          headerInfo.potential,
+        );
         player.list = this.list;
         this.players.push(player);
       }
+    },
+
+    normalizeColumns(line, headerMap, compare, optionalHeaders) {
+      const values = line.split('\t');
+      const orderedValues = [];
+      for (const header of compare) {
+        const index = headerMap.get(header);
+        if (index === undefined) {
+          throw `Missing column: ${header}`;
+        }
+        if (values[index] === undefined) {
+          throw `Missing value for column: ${header}`;
+        }
+        orderedValues.push(values[index]);
+      }
+      for (const header of optionalHeaders) {
+        const index = headerMap.get(header);
+        if (index === undefined || values[index] === undefined) {
+          orderedValues.push('');
+        } else {
+          orderedValues.push(values[index]);
+        }
+      }
+      return orderedValues;
+    },
+
+    getHeaderInfo(lines) {
+      const firstLine = lines[0] || '';
+      const headerTokens = firstLine
+        .split('\t')
+        .map((token) => token.replace(' ▾', '').trim());
+      const headerMap = new Map();
+      for (let i = 0; i < headerTokens.length; i += 1) {
+        if (headerTokens[i]) {
+          headerMap.set(headerTokens[i], i);
+        }
+      }
+
+      const hasHeaderTokens =
+        headerMap.has('POS') ||
+        headerMap.has('Name') ||
+        headerMap.has('Inf') ||
+        headerMap.has('Age');
+      if (hasHeaderTokens) {
+        const hasPotential = this.headersPotential.every((header) =>
+          headerMap.has(header),
+        );
+        const hasCurrent = this.headers.every((header) =>
+          headerMap.has(header),
+        );
+        if (hasPotential) {
+          return {
+            compare: this.headersPotential,
+            optionalHeaders: this.optionalHeadersPotential,
+            potential: true,
+            headerMap,
+            usedHeader: true,
+          };
+        }
+        if (hasCurrent) {
+          return {
+            compare: this.headers,
+            optionalHeaders: this.optionalHeaders,
+            potential: false,
+            headerMap,
+            usedHeader: true,
+          };
+        }
+        return {
+          error: `Invalid input! Make sure to copy from the "${this.capitalized} Ratings" view.`,
+        };
+      }
+
+      // Fall back to length-based detection when no header row is present
+      const sampleValues = headerTokens.filter(Boolean);
+      if (sampleValues.length === this.headersPotential.length) {
+        return {
+          compare: this.headersPotential,
+          potential: true,
+          headerMap: null,
+          usedHeader: false,
+        };
+      }
+      return {
+        compare: this.headers,
+        potential: false,
+        headerMap: null,
+        usedHeader: false,
+      };
     },
 
     clickHelp() {
@@ -159,23 +351,23 @@ export default {
     },
 
     // Sets a brief timeout then displays an error
-    raiseError(message='') {
+    raiseError(message = '') {
       this.error = '';
       if (!message) {
-        message = 'Invalid input! Try the "help" button for tips.'
+        message = 'Invalid input! Try the "help" button for tips.';
       }
       setTimeout(() => {
         this.error = message;
       }, 100);
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style>
 #help {
   text-align: left;
-  max-width: 42rem;
+  max-width: 43rem;
   margin: auto;
   transition: all 0.5s;
   transition-property: max-height, opacity;
