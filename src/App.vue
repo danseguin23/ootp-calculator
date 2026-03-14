@@ -4,9 +4,9 @@
   <div id="header">
     <router-link to="/">OOTP CALCULATOR</router-link>
   </div>
-  <navbar v-if="!home"/>
+  <navbar v-if="!home" />
   <div class="container content">
-    <router-view/>
+    <router-view />
   </div>
   <AppFooter />
 </template>
@@ -21,13 +21,13 @@ export default {
   components: { Navbar, Donate, AppFooter, Welcome },
   data() {
     return {
-      welcome: false
-    }
+      welcome: false,
+    };
   },
   computed: {
     home() {
       return this.$route.path == '/';
-    }
+    },
   },
   created() {
     let today = new Date();
@@ -45,35 +45,48 @@ export default {
     closeWelcome() {
       this.welcome = false;
       localStorage.setItem('fresh-25', 'true');
-    }
-  }
-}
+    },
+  },
+};
 </script>
 <style>
-
 /* For themes */
 
 body {
   position: relative;
   --font-sans: 'Barlow Condensed', 'Tahoma', sans-serif;
   --font-mono: 'Source Code Pro', monospace;
-  --color-primary: #007A8C;
-  --color-secondary: #b62e3a;
-  --color-primary-lighter: #009eaa;
-  --color-primary-darker: #00556d;
-  --color-secondary-lighter: #f1414f;
-  --color-secondary-darker: #9c0720;
-  --color-contrast: #c41230;
+  --color-primary: #a84300;
+  --color-secondary: #0442c8;
+  --color-primary-lighter: #cb6100;
+  --color-primary-darker: #7e2e00;
+  --color-secondary-lighter: #2563eb;
+  --color-secondary-darker: #001ba6;
   --color-gray: #ccc;
-  --color-dark: #010609;
-  --color-translucent: rgba(12, 12, 20, 0.8);
-  --color-translucent-dark: rgba(12, 12, 20, 0.8);
+  --color-dark: #060606;
+  --color-translucent: rgba(12, 12, 12, 0.6);
+  --color-translucent-dark: rgba(12, 12, 12, 0.6);
 
-  --gradient-primary: linear-gradient(var(--color-primary-lighter), var(--color-primary));
-  --gradient-primary-vertical: linear-gradient(var(--color-primary), var(--color-primary));
-  --gradient-primary-hover: linear-gradient(var(--color-primary-darker), var(--color-primary));
-  --gradient-secondary: linear-gradient(var(--color-secondary-lighter), var(--color-secondary));
-  --gradient-secondary-hover: linear-gradient(var(--color-secondary-darker), var(--color-secondary));
+  --gradient-primary: linear-gradient(
+    var(--color-primary-lighter),
+    var(--color-primary)
+  );
+  --gradient-primary-vertical: linear-gradient(
+    var(--color-primary),
+    var(--color-primary)
+  );
+  --gradient-primary-hover: linear-gradient(
+    var(--color-primary-darker),
+    var(--color-primary)
+  );
+  --gradient-secondary: linear-gradient(
+    var(--color-secondary-lighter),
+    var(--color-secondary)
+  );
+  --gradient-secondary-hover: linear-gradient(
+    var(--color-secondary-darker),
+    var(--color-secondary)
+  );
   --gradient-tertiary: linear-gradient(#d1d1d1, #bfbfbf);
   --gradient-tertiary-hover: linear-gradient(#ababab, #bfbfbf);
 }
@@ -107,7 +120,7 @@ body.theme-dark {
   --color-primary: #488ECB;
   --color-secondary: #EF4E68;
   */
-  background-image: url('/img/background-26.png');
+  background-image: url('/img/background-27.jpg');
   background-attachment: fixed;
   background-position-x: center;
   background-position-y: top;
@@ -158,12 +171,16 @@ body {
   margin-bottom: 3rem;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   text-transform: uppercase;
   font-weight: 600;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
   border: 1px solid var(--color-opaque);
   border-radius: 4px;
   color: var(--color-text);
@@ -183,15 +200,17 @@ option {
 
 /* Buttons */
 
-.button-submit, .button-help, .button-clear {
+.button-submit,
+.button-help,
+.button-clear {
   font-weight: 600;
   border: none;
   padding: 2px 10px;
   margin: 8px 4px !important;
-  transition: .1s;
+  transition: 0.1s;
   border-radius: 5px;
   text-transform: uppercase;
-  transition: background-image .2s;
+  transition: background-image 0.2s;
   border: 2px solid black;
 }
 
@@ -225,7 +244,8 @@ option {
 }
 */
 
-.button-submit:disabled, .button-clear:disabled {
+.button-submit:disabled,
+.button-clear:disabled {
   opacity: 0.5;
 }
 
@@ -249,8 +269,6 @@ option {
   margin-top: -12px;
   font-weight: 500;
 }
-
-
 </style>
 
 <style scoped>
@@ -274,7 +292,6 @@ option {
 }
 
 .h4 {
-  margin-bottom: .25rem;
+  margin-bottom: 0.25rem;
 }
-
 </style>
