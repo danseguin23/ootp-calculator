@@ -1,8 +1,13 @@
 import { convertRating, revertRating } from './util';
 
 const FIELDS_BATTING = ['contact', 'gap', 'power', 'eye', 'avoidKs', 'speed', 'stealing', 'defense'];
+const FIELDS_BATTING_REQUIRED = ['contact', 'gap', 'power', 'eye', 'avoidKs', 'speed', 'stealing'];
 const FIELDS_PITCHING = ['stuff', 'movement', 'control', 'stamina', 'hold'];
+const FIELDS_PITCHING_REQUIRED = ['stuff', 'movement', 'control', 'stamina', 'hold'];
 const FIELDS_FIELDING = ["catcherBlocking", "catcherFraming", "catcherArm", "infieldRng", "infieldErr", "infieldArm", "turnDP", "outfieldRng", "outfieldErr", "outfieldArm"];
+
+const BATTING_REQUIRED_COLUMNS = { current: 23, potential: 18 };
+const PITCHING_REQUIRED_COLUMNS = { current: 18, potential: 16 };
 
 // For defensive WAR, should probably be updated
 const DWAR_SLOPES = [0.0225, 0.01125, 0.03, 0.01125, 0.045, 0.015, 0.03, 0.015];
@@ -94,12 +99,12 @@ const LOOKUP_PITCHING = {
     [600, 5],
   ],
   hr: [
-    [0, 50],
+    [0, 60],
     [150, 35],
-    [300, 25],
-    [400, 15],
-    [500, 7.5],
-    [600, 1],
+    [300, 20],
+    [400, 12],
+    [500, 6],
+    [600, 2],
   ],
   babip: [
     [0, 0.32],
@@ -122,6 +127,22 @@ const FORMULA_PITCHING = {
   absp: { slope: [0.0275, 0.0216], intercept: [7.32, 7.91] },  // Stamina -> AB / (G + GS)
   abrp: { slope: [0.0339, 0.0339], intercept: [3.27, 3.27] },  // Stamina -> AB / (G + GS)
   wsb: { slope: [-0.012, -0.006], intercept: [1.2, 0.6] },  // Hold -> wSB
+}
+
+// League average 20-80 ratings aren't always 50
+const AVERAGE_20_80_PITCHING = {
+  stuff: 48,
+  babip: 50,
+  hra: 48,
+  control: 50
+}
+
+const AVERAGE_20_80_BATTING = {
+  avoidKs: 51,
+  babip: 52,
+  gap: 51,
+  power: 51,
+  eye: 49,
 }
 
 // BABIP lookup for pitchers
@@ -150,14 +171,14 @@ const LOOKUP_POS = {
 }
 
 const LEAGUE_TOTALS = {
-  atBats: 163687,
-  hits: 39823,
-  doubles: 7771,
-  triples: 697,
-  homeRuns: 5453,
-  walks: 14929,
-  hitByPitches: 2020,
-  strikeouts: 41197
+  atBats: 163664,
+  hits: 40138,
+  doubles: 7745,
+  triples: 628,
+  homeRuns: 5650,
+  walks: 14823,
+  hitByPitches: 1928,
+  strikeouts: 40645
 }
 
 const LEAGUE_AVERAGES = {
@@ -174,16 +195,16 @@ const LEAGUE_AVERAGES = {
 // For WAR calculations
 const run_pa = 0.118;  
 const run_sb = 0.2;
-const run_cs = -0.425;
+const run_cs = -0.41;
 const run_ob = -0.0072;
-const war_pa = 0.003135;
+const war_pa = 0.0034;
 // Pitchers
 const rs_factor = 1.235;  // Multiply by AVG for RS% (maybe use wOBA or OBP?)
 const add_outs = 10;  // Add to outs for innings calculation
-const lg_era = 4.08;
+const lg_era = 4.15;
 const lg_ra9 = 4.45;
-const c_fip = 3.16;
-const war_ip = 0.0048;  // Add to WAR (multiplied by innings)
+const c_fip = 3.13;
+const war_ip = 0.004;  // Add to WAR (multiplied by innings)
 
 export class Batter {
   list;
@@ -212,6 +233,8 @@ export class Batter {
   speed;
   stealing;
   defense;
+  babipInput;
+  stealTendency;
   scoutAccuracy;
   // Projected stats
   gp;
@@ -249,6 +272,8 @@ export class Batter {
       }
       this.team = team;
       let split = player.split('\t');
+      const requiredLength = potential ? BATTING_REQUIRED_COLUMNS.potential : BATTING_REQUIRED_COLUMNS.current;
+      const optional = split.slice(requiredLength);
       this.position = String(split[0]).trim();
       this.jersey = Number(split[1]);
       this.name = String(split[2]).trim();
@@ -270,10 +295,13 @@ export class Batter {
       // this.buntForHit = convertRating(scale, split[18]);
       this.speed = convertRating(scale, split[index.speed]);
       this.stealing = convertRating(scale, split[index.stealing]);
-      this.defense = convertRating(scale, split[index.defense]);
+      const defenseValue = parseOptionalRating(scale, split[index.defense]);
+      this.defense = defenseValue;
+      this.babipInput = parseOptionalRating(scale, optional[0]);
+      this.stealTendency = parseOptionalRating(scale, optional[1]);
       // this.scoutAccuracy = String(split[22]).trim();
-      for (let key of FIELDS_BATTING) {
-        if (this[key] == NaN || this[key] == 'undefined') {
+      for (let key of FIELDS_BATTING_REQUIRED) {
+        if (Number.isNaN(this[key]) || this[key] === undefined) {
           throw 'Invalid input! Try the "help" button for tips.'
         }
       }
@@ -286,9 +314,9 @@ export class Batter {
       if (player.position == '-') {
         throw 'Invalid input! Position cannot be left blank.'
       }
-      for (let field of FIELDS_BATTING) {
+      for (let field of FIELDS_BATTING_REQUIRED) {
         let value = player[field];
-        if (!value) {
+        if (isBlank(value)) {
           throw 'Invalid input! Ratings cannot be left blank.'
         }
       }
@@ -304,7 +332,10 @@ export class Batter {
       this.avoidKs = convertRating(scale, player.avoidKs);
       this.speed = convertRating(scale, player.speed);
       this.stealing = convertRating(scale, player.stealing);
-      this.defense = convertRating(scale, player.defense);
+      const defenseValue = parseOptionalRating(scale, player.defense);
+      this.defense = defenseValue;
+      this.babipInput = parseOptionalRating(scale, player.babipInput);
+      this.stealTendency = parseOptionalRating(scale, player.stealTendency);
     } 
     // For copying purposes
     else if (!scale) {
@@ -332,20 +363,24 @@ export class Batter {
       parkHr = park.hr_overall;
     }
     // Estimated grades
-    let xbabip = Math.max((this.contact * INTERMEDIATE_ESTIMATORS.babip[0] + this.avoidKs * INTERMEDIATE_ESTIMATORS.babip[1] + INTERMEDIATE_ESTIMATORS.babip[2]), 0);
-    let xagg = Math.max((this.speed * INTERMEDIATE_ESTIMATORS.aggressiveness[0] + this.stealing * INTERMEDIATE_ESTIMATORS.aggressiveness[1] + INTERMEDIATE_ESTIMATORS.aggressiveness[2]), 0);
+    let xbabip = this.babipInput != null
+      ? this.babipInput
+      : Math.max((this.contact * INTERMEDIATE_ESTIMATORS.babip[0] + this.avoidKs * INTERMEDIATE_ESTIMATORS.babip[1] + INTERMEDIATE_ESTIMATORS.babip[2]), 0);
+    let xagg = this.stealTendency != null
+      ? this.stealTendency
+      : Math.max((this.speed * INTERMEDIATE_ESTIMATORS.aggressiveness[0] + this.stealing * INTERMEDIATE_ESTIMATORS.aggressiveness[1] + INTERMEDIATE_ESTIMATORS.aggressiveness[2]), 0);
     // Indexes (1 for ratings > 100, 0 for ratings <= 100)
     let h3Index = +(this.speed > 100);
     let sbIndex = +(this.stealing > 100);
     let sbaIndex = +(xagg > 100);
-    let zrIndex = +(this.defense > 100);
+    const hasDefense = this.defense !== null && this.defense !== undefined;
+    let zrIndex = hasDefense ? +(this.defense > 100) : 0;
     // Adjusted rates before park factor adjustment
-    let babipAdj = getAdjustedRate(xbabip, LEAGUE_AVERAGES.babip, LOOKUP_BATTING.babip);
-    let soAdj = getAdjustedRate(this.avoidKs, LEAGUE_AVERAGES.so, LOOKUP_BATTING.so, true);
-    let gapAdj = getAdjustedRate(this.gap, LEAGUE_AVERAGES.gap, LOOKUP_BATTING.gap);
-    let hrAdj = getAdjustedRate(this.power, LEAGUE_AVERAGES.hr, LOOKUP_BATTING.hr, true);
-    let bbAdj = getAdjustedRate(this.eye, LEAGUE_AVERAGES.bb, LOOKUP_BATTING.bb, true);
-    console.log(`BABIP: ${babipAdj}, SO: ${soAdj}, Gap: ${gapAdj}, HR: ${hrAdj}, BB: ${bbAdj}`);
+    let babipAdj = getAdjustedRate(xbabip, AVERAGE_20_80_BATTING.babip, LEAGUE_AVERAGES.babip, LOOKUP_BATTING.babip);
+    let soAdj = getAdjustedRate(this.avoidKs, AVERAGE_20_80_BATTING.avoidKs, LEAGUE_AVERAGES.so, LOOKUP_BATTING.so, true);
+    let gapAdj = getAdjustedRate(this.gap, AVERAGE_20_80_BATTING.gap, LEAGUE_AVERAGES.gap, LOOKUP_BATTING.gap);
+    let hrAdj = getAdjustedRate(this.power, AVERAGE_20_80_BATTING.power, LEAGUE_AVERAGES.hr, LOOKUP_BATTING.hr, true);
+    let bbAdj = getAdjustedRate(this.eye, AVERAGE_20_80_BATTING.eye, LEAGUE_AVERAGES.bb, LOOKUP_BATTING.bb, true);
     // Adjusted rates
     // Middle men / helpers / whatever
     let h3Pct = (this.speed * FORMULA_BATTING.h3.slope[h3Index] + FORMULA_BATTING.h3.intercept[h3Index]);
@@ -355,7 +390,9 @@ export class Batter {
     let hr = hrAdj * 550 * parkHr;
     let bb = bbAdj * 550;
     let so = soAdj * 550;
-    let zr =  (this.defense * FORMULA_BATTING.zr.slope[zrIndex] + FORMULA_BATTING.zr.intercept[zrIndex]);
+    let zr = hasDefense
+      ? (this.defense * FORMULA_BATTING.zr.slope[zrIndex] + FORMULA_BATTING.zr.intercept[zrIndex])
+      : 0;
 
     let h = (babip * (550 - hr - so) + hr) * parkAvg;
     let gap = gapAdj * (h - hr);
@@ -402,7 +439,15 @@ export class Batter {
 
   revertRatings(scale) {
     for (let field of FIELDS_BATTING) {
+      if (this[field] === null || this[field] === undefined) {
+        continue;
+      }
       this[field] = revertRating(scale, this[field]);
+    }
+    for (let field of ['babipInput', 'stealTendency']) {
+      if (this[field] !== undefined && this[field] !== null && this[field] !== '') {
+        this[field] = revertRating(scale, this[field]);
+      }
     }
   }
 }
@@ -429,6 +474,8 @@ export class Pitcher {
   stamina;
   groundFly;
   hold;
+  hraInput;
+  babipInput;
   scoutAccuracy;
   // Projected stats
   gp;
@@ -467,6 +514,8 @@ export class Pitcher {
       }
       this.team = team;
       let split = player.split('\t');
+      const requiredLength = potential ? PITCHING_REQUIRED_COLUMNS.potential : PITCHING_REQUIRED_COLUMNS.current;
+      const optional = split.slice(requiredLength);
       this.position = String(split[0]).trim();
       this.jersey = Number(split[1]);
       this.name = String(split[2]).trim();
@@ -484,9 +533,11 @@ export class Pitcher {
       this.stamina = convertRating(scale, split[index.stamina]);
       this.groundFly = String(split[index.groundFly]).trim();
       this.hold = convertRating(scale, split[index.hold]);
+      this.hraInput = parseOptionalRating(scale, optional[0]);
+      this.babipInput = parseOptionalRating(scale, optional[1]);
       // this.scoutAccuracy = String(split[17]).trim();
-      for (let key of FIELDS_PITCHING) {
-        if (this[key] == NaN || this[key] == 'undefined') {
+      for (let key of FIELDS_PITCHING_REQUIRED) {
+        if (Number.isNaN(this[key]) || this[key] === undefined) {
           throw 'Invalid input! Try the "help" button for tips.'
         }
       }
@@ -499,9 +550,9 @@ export class Pitcher {
       if (player.position == '-') {
         throw 'Invalid input! Position cannot be left blank.'
       }
-      for (let field of FIELDS_PITCHING) {
+      for (let field of FIELDS_PITCHING_REQUIRED) {
         let value = player[field];
-        if (!value) {
+        if (isBlank(value)) {
           throw 'Invalid input! Ratings cannot be left blank.'
         }
       }
@@ -515,6 +566,8 @@ export class Pitcher {
       this.stamina = convertRating(scale, player.stamina);
       this.groundFly = player.groundFly;
       this.hold = convertRating(scale, player.hold);
+      this.hraInput = parseOptionalRating(scale, player.hraInput);
+      this.babipInput = parseOptionalRating(scale, player.babipInput);
     } 
     // For copying purposes
     else if (!scale) {
@@ -527,17 +580,17 @@ export class Pitcher {
     // Park
     let park = teams.find(p => p.abbr == this.team);
     // Estimated grades
-    let xbabip = Math.max((this.movement * INTERMEDIATE_ESTIMATORS.pbabip[0] + LOOKUP_GROUND_FLY[this.groundFly] * INTERMEDIATE_ESTIMATORS.pbabip[1] + INTERMEDIATE_ESTIMATORS.pbabip[2]), 0);
-    let xhra = Math.max((this.movement * INTERMEDIATE_ESTIMATORS.hra[0] + LOOKUP_GROUND_FLY[this.groundFly] * INTERMEDIATE_ESTIMATORS.hra[1] + INTERMEDIATE_ESTIMATORS.hra[2]), 0);
-    console.log('Movement:', this.movement, 'GF:', LOOKUP_GROUND_FLY[this.groundFly]);
-    console.log(`xBABIP: ${xbabip}, xHRA: ${xhra}`);
+    let xbabip = this.babipInput != null
+      ? this.babipInput
+      : Math.max((this.movement * INTERMEDIATE_ESTIMATORS.pbabip[0] + LOOKUP_GROUND_FLY[this.groundFly] * INTERMEDIATE_ESTIMATORS.pbabip[1] + INTERMEDIATE_ESTIMATORS.pbabip[2]), 0);
+    let xhra = this.hraInput != null
+      ? this.hraInput
+      : Math.max((this.movement * INTERMEDIATE_ESTIMATORS.hra[0] + LOOKUP_GROUND_FLY[this.groundFly] * INTERMEDIATE_ESTIMATORS.hra[1] + INTERMEDIATE_ESTIMATORS.hra[2]), 0);
     // Adjusted rates before park factor adjustment
-    let babipAdj = getAdjustedRate(xbabip, LEAGUE_AVERAGES.babip, LOOKUP_PITCHING.babip, false, true);
-    console.log(`xBABIP: ${xbabip} -> BABIP: ${babipAdj}`);
-    let hrAdj = getAdjustedRate(xhra, LEAGUE_AVERAGES.hr, LOOKUP_PITCHING.hr, true);
-    let soAdj = getAdjustedRate(this.stuff, LEAGUE_AVERAGES.so, LOOKUP_PITCHING.so, true);
-    let bbAdj = getAdjustedRate(this.control, LEAGUE_AVERAGES.bb, LOOKUP_PITCHING.bb, true);
-    console.log(`PBABIP: ${babipAdj}, HRA: ${hrAdj}, SO: ${soAdj}, BB: ${bbAdj}`);
+    let babipAdj = getAdjustedRate(xbabip, AVERAGE_20_80_PITCHING.babip, LEAGUE_AVERAGES.babip, LOOKUP_PITCHING.babip, false, true);
+    let hrAdj = getAdjustedRate(xhra, AVERAGE_20_80_PITCHING.hra, LEAGUE_AVERAGES.hr, LOOKUP_PITCHING.hr, true);
+    let soAdj = getAdjustedRate(this.stuff, AVERAGE_20_80_PITCHING.stuff, LEAGUE_AVERAGES.so, LOOKUP_PITCHING.so, true);
+    let bbAdj = getAdjustedRate(this.control, AVERAGE_20_80_PITCHING.control, LEAGUE_AVERAGES.bb, LOOKUP_PITCHING.bb, true);
     // Indexes (1 for ratings > 100, 0 for ratings <= 100)
     let abIndex = +(this.stamina > 100);
     let wsbIndex = +(this.hold > 100);
@@ -606,6 +659,11 @@ export class Pitcher {
   revertRatings(scale) {
     for (let field of FIELDS_PITCHING) {
       this[field] = revertRating(scale, this[field]);
+    }
+    for (let field of ['hraInput', 'babipInput']) {
+      if (this[field] !== undefined && this[field] != null && this[field] !== '') {
+        this[field] = revertRating(scale, this[field]);
+      }
     }
   }
 }
@@ -809,15 +867,16 @@ function getLookupValue(lookup, rating) {
   return lookup[lookup.length - 1][1];
 }
 
-function getAdjustedRate(rate1to250, leagueAverage, lookup, per550=false, keepAs1to250=false) {
+function getAdjustedRate(rate1to250, leagueRate20to80, leagueAverage, lookup, per550=false, keepAs1to250=false) {
   let rate;
   let lookup50Grade;
+  const leagueRate1to250 = convertRating('20 to 80', leagueRate20to80, false, false, true);
   if (keepAs1to250) {
     rate = rate1to250;
-    lookup50Grade = getLookupValue(lookup, 100);
+    lookup50Grade = getLookupValue(lookup, leagueRate1to250);
   } else {
     rate = convert250to600(rate1to250);
-    lookup50Grade = getLookupValue(lookup, 400);
+    lookup50Grade = getLookupValue(lookup, convert250to600(leagueRate1to250));
   }
   let raw = getLookupValue(lookup, rate);
   if (per550) {
@@ -827,4 +886,18 @@ function getAdjustedRate(rate1to250, leagueAverage, lookup, per550=false, keepAs
   }
   let adjusted = (raw*leagueAverage*(1-lookup50Grade))/(raw*leagueAverage-lookup50Grade*raw-lookup50Grade*leagueAverage+lookup50Grade)
   return adjusted;
+}
+
+function isBlank(value) {
+  if (value === undefined || value === null) {
+    return true;
+  }
+  return String(value).trim() === '';
+}
+
+function parseOptionalRating(scale, value, nullable=false, stuff=false) {
+  if (isBlank(value) || value === '-' || value === '- ') {
+    return null;
+  }
+  return convertRating(scale, value, nullable, stuff);
 }
