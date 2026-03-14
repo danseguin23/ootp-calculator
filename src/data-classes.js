@@ -94,12 +94,12 @@ const LOOKUP_PITCHING = {
     [600, 5],
   ],
   hr: [
-    [0, 50],
+    [0, 60],
     [150, 35],
-    [300, 25],
-    [400, 15],
-    [500, 7.5],
-    [600, 1],
+    [300, 20],
+    [400, 12],
+    [500, 6],
+    [600, 2],
   ],
   babip: [
     [0, 0.32],
@@ -150,14 +150,14 @@ const LOOKUP_POS = {
 }
 
 const LEAGUE_TOTALS = {
-  atBats: 163687,
-  hits: 39823,
-  doubles: 7771,
-  triples: 697,
-  homeRuns: 5453,
-  walks: 14929,
-  hitByPitches: 2020,
-  strikeouts: 41197
+  atBats: 163664,
+  hits: 40138,
+  doubles: 7745,
+  triples: 628,
+  homeRuns: 5650,
+  walks: 14823,
+  hitByPitches: 1928,
+  strikeouts: 40645
 }
 
 const LEAGUE_AVERAGES = {
