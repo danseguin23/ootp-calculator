@@ -18,7 +18,7 @@
         Select "Report", then "Write report to disk". This will open the table
         in your browser.
       </li>
-      <li>Select and copy the contents of the table.</li>
+      <li>Select and copy the contents of the table, including headers.</li>
       <li>Paste in the box below, then submit.</li>
     </ol>
     <p>
@@ -322,21 +322,9 @@ export default {
         };
       }
 
-      // Fall back to length-based detection when no header row is present
-      const sampleValues = headerTokens.filter(Boolean);
-      if (sampleValues.length === this.headersPotential.length) {
-        return {
-          compare: this.headersPotential,
-          potential: true,
-          headerMap: null,
-          usedHeader: false,
-        };
-      }
+      // Reject input if no header row is present
       return {
-        compare: this.headers,
-        potential: false,
-        headerMap: null,
-        usedHeader: false,
+        error: `Missing header row! Please ensure you copy the header row from the \"${this.capitalized} Ratings\" view.`,
       };
     },
 
