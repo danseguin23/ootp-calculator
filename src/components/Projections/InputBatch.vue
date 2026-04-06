@@ -185,20 +185,18 @@ export default {
     submit() {
       this.players = [];
       let lines = this.input.trim().split('\n');
-      // Remove leading tabs
-      for (let i in lines) {
-        let line = lines[i];
-        lines[i] = line.trim();
-      }
-      if (lines[0] == '') {
+      // Trim whitespace on each line
+      lines = lines.map((line) => line.trim());
+      if (!lines.length || lines[0] === '') {
         return { error: 'Input cannot be blank!' };
       }
       try {
-        // Remove first line if irrelevant
-        if (lines[0].indexOf('\t') < 0) {
+        // Remove leading non-tab lines (e.g., "Player List")
+        while (lines.length && lines[0].indexOf('\t') < 0) {
           lines.shift();
         }
-        if (lines.at(-1).indexOf('\t') < 0) {
+        // Remove trailing non-tab lines (e.g., footer)
+        while (lines.length && lines.at(-1).indexOf('\t') < 0) {
           lines.pop();
         }
         this.$analytics.logEvent(this.$instance, `project-${this.type}-batch`);
@@ -229,22 +227,35 @@ export default {
 
     mapPlayers(lines, headerInfo) {
       for (let line of lines) {
-        let normalizedLine = line;
-        if (headerInfo.headerMap) {
-          const orderedValues = this.normalizeColumns(
-            line,
-            headerInfo.headerMap,
-            headerInfo.compare,
-            headerInfo.optionalHeaders,
-          );
-          normalizedLine = orderedValues.join('\t');
+        const values = line.split('\t');
+        const rowMap = new Map();
+        headerInfo.headerTokens.forEach((header, idx) => {
+          rowMap.set(header, values[idx]);
+        });
+
+        const normalizedValues = [];
+        for (const header of headerInfo.outputHeaders) {
+          const candidates = headerInfo.headerCandidates.get(header) || [header];
+          let value = '';
+          for (const candidate of candidates) {
+            if (rowMap.has(candidate) && rowMap.get(candidate) !== undefined) {
+              value = rowMap.get(candidate);
+              break;
+            }
+          }
+          if (headerInfo.requiredHeaders.has(header) && value === '') {
+            throw `Missing value for required column: ${header}`;
+          }
+          normalizedValues.push(value);
         }
+
+        let normalizedLine = normalizedValues.join('\t');
         let player = new this.model(
           this.teams,
           this.scale,
           normalizedLine,
           this.team,
-          headerInfo.potential,
+          false,
         );
         player.list = this.list;
         this.players.push(player);
@@ -280,51 +291,66 @@ export default {
       const headerTokens = firstLine
         .split('\t')
         .map((token) => token.replace(' ▾', '').trim());
-      const headerMap = new Map();
-      for (let i = 0; i < headerTokens.length; i += 1) {
-        if (headerTokens[i]) {
-          headerMap.set(headerTokens[i], i);
-        }
-      }
 
-      const hasHeaderTokens =
-        headerMap.has('POS') ||
-        headerMap.has('Name') ||
-        headerMap.has('Inf') ||
-        headerMap.has('Age');
-      if (hasHeaderTokens) {
-        const hasPotential = this.headersPotential.every((header) =>
-          headerMap.has(header),
-        );
-        const hasCurrent = this.headers.every((header) =>
-          headerMap.has(header),
-        );
-        if (hasPotential) {
-          return {
-            compare: this.headersPotential,
-            optionalHeaders: this.optionalHeadersPotential,
-            potential: true,
-            headerMap,
-            usedHeader: true,
-          };
-        }
-        if (hasCurrent) {
-          return {
-            compare: this.headers,
-            optionalHeaders: this.optionalHeaders,
-            potential: false,
-            headerMap,
-            usedHeader: true,
-          };
-        }
+      if (!headerTokens.length || !headerTokens.includes('POS')) {
         return {
-          error: `Invalid input! Make sure to copy from the "${this.capitalized} Ratings" view.`,
+          error: `Missing header row! Please ensure you copy the header row from the "${this.capitalized} Ratings" view.`,
         };
       }
 
-      // Reject input if no header row is present
+      const outputHeaders =
+        this.type === 'batting' ? [...headers_batting] : [...headers_pitching];
+      const optionalHeaders =
+        this.type === 'batting'
+          ? [...optional_headers_batting]
+          : [...optional_headers_pitching];
+      const allOutputHeaders = outputHeaders.concat(optionalHeaders);
+
+      // Required columns (base stats) for validation
+      const requiredHeaders = new Set(
+        this.type === 'batting'
+          ? ['POS', 'B', 'CON', 'GAP', 'POW', 'EYE', "K's", 'SPE', 'STE', 'DEF']
+          : ['POS', 'STU', 'MOV', 'CON', 'STM', 'G/F', 'HLD'],
+      );
+
+      const headerCandidates = new Map();
+      const getCandidates = (header) => {
+        switch (header) {
+          case 'CON':
+          case 'GAP':
+          case 'POW':
+          case 'EYE':
+          case 'STU':
+          case 'MOV':
+            return [header, `${header} P`, `${header} vL`, `${header} vR`];
+          case "K's":
+            return ["K's", 'K P', 'K vL', 'K vR'];
+          default:
+            return [header];
+        }
+      };
+
+      for (const header of allOutputHeaders) {
+        headerCandidates.set(header, getCandidates(header));
+      }
+
+      // Validate required headers by checking any candidate in precedence order
+      for (const header of requiredHeaders) {
+        const candidates = headerCandidates.get(header) || [header];
+        const found = candidates.some((candidate) => headerTokens.includes(candidate));
+        if (!found) {
+          return {
+            error: `Missing required column for stat: ${header}`,
+          };
+        }
+      }
+
       return {
-        error: `Missing header row! Please ensure you copy the header row from the \"${this.capitalized} Ratings\" view.`,
+        headerTokens,
+        outputHeaders: allOutputHeaders,
+        requiredHeaders,
+        headerCandidates,
+        usedHeader: true,
       };
     },
 
