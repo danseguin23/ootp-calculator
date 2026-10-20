@@ -1,21 +1,47 @@
 # OOTP Calculator
 
-The OOTP Calculator is a utility application used to assist in desicions while playing [OOTP Baseball](https://www.ootpdevelopments.com/out-of-the-park-baseball-home/). If you don't know what OOTP is, you probably won't find this repo very helpful.
+Utilitário comunitário para auxiliar decisões no [OOTP Baseball](https://www.ootpdevelopments.com/out-of-the-park-baseball-home/), sem vínculo oficial com OOTP Developments. O README anterior identifica a aplicação como versão “2.1.something”; o pacote declara `0.1.0`. O endereço histórico divulgado é [ootpcalculator.com](https://ootpcalculator.com/); disponibilidade e equivalência com este checkout não verificadas. Versões anteriores foram indicadas em outras branches.
 
-This is version 2.1.something of the OOTP Calculator, and the online application can be found at [ootpcalculator.com](https://ootpcalculator.com/). Older versions of the calculator can be found under different branches if that's what you're looking for.
+## Funcionalidades
 
-## Tools
+- **Position Calculator**: estima notas máximas e WAR defensivo para oito posições.
+- **Batter Projections**: projeta estatísticas de temporada a partir de avaliações de rebatedores.
+- **Pitcher Projections**: projeta estatísticas de arremessadores.
+- Entrada individual e em lote, listas locais, edição, duplicação, ordenação, exclusão e CSV nas projeções.
 
-Currently, the site supports the following functionality:
+As projeções se apresentam como adequadas a saves MLB de 2026. São estimativas da implementação, sem garantia de reprodução dos resultados do jogo.
 
-- **Position Calculator**: Enter fielding ratings for a player to generate position ratings,
-- **Batter Projections**: Enter batting ratings for a player(s) to calculate estimated full-season batting stats,
-- **Pitcher Projections**: Same as batter projections, but for pitchers.
+## Instalação e execução
 
-## Setup
+Com Node.js e npm disponíveis, na raiz do checkout:
 
-If you want to run this locally, clone the repo, call `npm install` to install dependencies, then `npm run serve` to run.
+```bash
+npm ci
+npm run serve
+```
 
-## Contributions
+O segundo comando acima é para Bash/Linux. No PowerShell:
 
-If you want to contribute to the calculator, be my guest. Fair warning though - I didn't originally intend this project to be open-source, so the code may be difficult to sift through.
+```powershell
+npm ci
+$env:NODE_OPTIONS="--openssl-legacy-provider"
+npx vue-cli-service serve --port 8081
+```
+
+A aplicação usa a porta 8081. Veja versões verificadas, build e limitações em [Desenvolvimento](docs/development.md).
+
+## Documentação
+
+- [Inventário e matriz de funcionalidades](docs/features/README.md)
+- [Arquitetura](docs/architecture.md)
+- [Cálculos](docs/calculations.md)
+- [Dados e armazenamento](docs/data-and-storage.md)
+- [Desenvolvimento](docs/development.md)
+- [Testes e evidências](docs/testing.md)
+- [Solução de problemas e defeitos conhecidos](docs/troubleshooting.md)
+- [Instruções para agentes](AGENTS.md)
+- [Convenções de planos](PLANS.md)
+
+## Contribuições e licença
+
+Contribuições são bem-vindas. O projeto nasceu como ferramenta pessoal; consulte as responsabilidades dos módulos antes de modificar fórmulas. A licença está em [LICENSE.md](LICENSE.md).
